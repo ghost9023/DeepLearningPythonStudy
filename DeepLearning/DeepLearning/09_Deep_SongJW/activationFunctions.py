@@ -2,15 +2,27 @@ import numpy as np
 import matplotlib.pyplot as pyplot
 
 def step_func(x) :
+    '''
+    안쓴다. 
+    '''
     return np.array(x>0, dtype=np.int)
 
 def sigmoid_func(x) :
+    '''
+    안쓴다. 
+    '''
     return 1/(1+np.exp(-x))
 
 def ReLU_func(x):
+    '''
+    쓴다. 
+    '''
     return np.maximum(0, x)
 
 def parametric_ReLU_func(x):
+    '''
+    쓴다 
+    '''
     a=0.3
     return np.where(x>0, x, a*x)
 
