@@ -39,3 +39,30 @@ print(x1>=2)
 print(x2.flatten())
 print(x2.reshape(4,1))
 print(x2.reshape(1,4))
+
+print('일반함수')
+a=np.array([1,2,3,6,5,4])
+print(np.argmax(a), a[np.argmax(a)]) # 차례로 최대값의 인덱스, 인덱스로 출력한 최대값
+a=np.array([[1,2,3],[4,6,5],[9,8,7]])
+print(np.argmax(a,axis=0), np.argmax(a,axis=1)) # axis : 0은 열단위로, 1은 행단위로 최대값의 인덱스 반환
+print()
+
+print('전치')
+a=np.array([[1,2,3],[4,5,6]])
+print(a,'\n',np.transpose(a))
+b=np.array([1,2,3,4,5])
+print(np.transpose(b))  # 벡터는 전치가 되지 않는다.
+
+print('\n내적-dot')
+a=np.array([[1,2],[3,4]])
+b=np.array([[5,6],[7,8]])
+c=np.array([1,2,3])
+d=np.array([[1],[2],[3]]) # 벡터끼리의 곱은 행벡터, 열벡터 간의 곱과 같다.
+print(np.dot(a,b))
+print(np.dot(c,d))
+
+print('\n신경망의 두 레이어 사이의 모습-2입력과 3노드의 연결')
+input=np.array([1,2])   # 입력 1, 2
+weight=np.array([[1,3,5],[2,4,6]])  # 노드의 연결이 차례로 (1,2), (3,4), (5,6) 가중치를 가짐
+net_input=np.dot(input,weight)
+print(net_input)
