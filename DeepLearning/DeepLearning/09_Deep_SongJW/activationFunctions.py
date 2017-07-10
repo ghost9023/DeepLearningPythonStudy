@@ -26,12 +26,6 @@ def parametric_ReLU_func(x):
     a=0.3
     return np.where(x>0, x, a*x)
 
-def identity_func(x):
-    '''
-    항등함수. 출력=입력 
-    '''
-    return x
-
 if __name__ == '__main__' :
     x=np.arange(-5, 5, 0.1)
     y_step=step_func(x)
