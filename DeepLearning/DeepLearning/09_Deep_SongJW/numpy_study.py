@@ -40,6 +40,13 @@ print(x2.flatten())
 print(x2.reshape(4,1))
 print(x2.reshape(1,4))
 
+print('쌓기')
+a=np.array([1,2,3])
+b=np.array([3,4,5])
+print(a.shape,b.shape)
+print(np.vstack([a,b]))
+print(np.hstack([a,b]))
+
 print('일반함수')
 a=np.array([1,2,3,6,5,4])
 print(np.argmax(a), a[np.argmax(a)]) # 차례로 최대값의 인덱스, 인덱스로 출력한 최대값
