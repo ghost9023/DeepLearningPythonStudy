@@ -23,7 +23,7 @@ def parametric_ReLU_func(x):
     '''
     쓴다 
     '''
-    a=0.3
+    a=0.2
     return np.where(x>0, x, a*x)
 
 def identity_func(x):
@@ -59,18 +59,18 @@ def softmax_func(x):
     return expX/sumX
 
 if __name__ == '__main__' :
-    # print('activation function')
-    # x=np.arange(-5, 5, 0.1)
-    # y_step=step_func(x)
-    # y_sig=sigmoid_func(x)
-    # y_ReLU=ReLU_func(x)
-    # y_para_ReLU=parametric_ReLU_func(x)
-    #
-    # pyplot.plot(x,y_step, '--')
-    # pyplot.plot(x,y_sig, '-.')
-    # pyplot.plot(x,y_ReLU,':')
-    # pyplot.plot(x,y_para_ReLU, ',')
-    # pyplot.show()
+    print('activation function')
+    x=np.arange(-5, 5, 0.1)
+    y_step=step_func(x)
+    y_sig=sigmoid_func(x)
+    y_ReLU=ReLU_func(x)
+    y_para_ReLU=parametric_ReLU_func(x)
+
+    pyplot.plot(x,y_step, '--')
+    pyplot.plot(x,y_sig, '-.')
+    pyplot.plot(x,y_ReLU,':')
+    pyplot.plot(x,y_para_ReLU, ',')
+    pyplot.show()
 
     print('\nsoftmax function')
     x=np.array([2.3, -0.9, 3.6])
