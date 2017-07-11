@@ -46,6 +46,7 @@ def sample_func2(x) :
 # print(numericalDiff(sample_func1,5))
 # print(numericalDiff(sample_func1,10))
 
-print(numericalGradient(sample_func2,np.array([3.0, 4.0])))
-print(numericalGradient(sample_func2,np.array([0.0, 2.0])))
-print(numericalGradient(sample_func2,np.array([3.0, 0.0])))
+# print(numericalGradient(sample_func2,np.array([3.0, 4.0])))
+# print(numericalGradient(sample_func2,np.array([0.0, 2.0])))
+# print(numericalGradient(sample_func2,np.array([3.0, 0.0])))
+
