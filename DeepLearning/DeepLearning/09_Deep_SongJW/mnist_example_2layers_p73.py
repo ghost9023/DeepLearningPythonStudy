@@ -49,7 +49,8 @@ def softmax(x) :
 
 def crossEntropyError(y, t) :
     delta = 1e-7
-    return -np.sum(t*np.log(y+delta))
+    error = -np.sum(t*np.log(y+delta))
+    return error
 
 def numerical_gradient(f, x) :
     is_vector = False

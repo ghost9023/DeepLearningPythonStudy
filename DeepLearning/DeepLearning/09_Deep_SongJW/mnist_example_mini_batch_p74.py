@@ -4,12 +4,16 @@ import mnist_example_2layers_p73 as me73
 import dataset_mnist as dm
 
 (trainImg, trainLbl), (testImg, testLbl) = dm.load_mnist(one_hot_label=True)
+
+print(trainImg.shape, trainLbl.shape)
+print(testImg.shape, testLbl.shape)
+
 network = me73.MyTwoLayerNet(784, 50, 10)
 
 # hyper parameters : 사람이 직접 결정하는 변수
 itersNum = 1000 # 반복횟수
 trainSize = trainImg.shape[0] # 학습데이터 건수 60000건
-batchSize = 100 # mini batch 사이즈
+batchSize = 10 # mini batch 사이즈
 learningRate = 0.1 # learning rate
 
 # 누적기록
