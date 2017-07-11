@@ -3,14 +3,19 @@ import numpy as np
 class MyTwoLayerNet :
 
     def __init__(self, inputSize, hiddenSize, outputSize, weightIniStd = 0.01):
-        self.W1=weightIniStd * np.random.randn(inputSize, hiddenSize)
-        self.W2=weightIniStd * np.random.randn(hiddenSize, outputSize)
-        self.b1=np.zeros(hiddenSize)
-        self.b2=np.zeros(outputSize)
+        self.params={}
+        self.params['W1']=weightIniStd * np.random.randn(inputSize, hiddenSize)
+        self.params['W2']=weightIniStd * np.random.randn(hiddenSize, outputSize)
+        self.params['b1']=np.zeros(hiddenSize)
+        self.params['b2']=np.zeros(outputSize)
 
     def predict(self, x):
-        z=sigmoid(np.dot(x, self.W1)+self.b1)
-        y=softmax(np.dot(z, self.W2)+self.b2)
+        W1=self.params['W1']
+        W2=self.params['W2']
+        b1=self.params['b1']
+        b2=self.params['b2']
+        z=sigmoid(np.dot(x, W1)+b1)
+        y=softmax(np.dot(z, W2)+b2)
         return y
 
     def loss(self, x, t):
@@ -27,18 +32,18 @@ class MyTwoLayerNet :
     def numericalGradient(self, x, t):
         lossW=lambda W : self.loss(x,t)
         grads={}
-        grads['W1']=numerical_gradient(lossW, self.W1)
-        grads['W2'] = numerical_gradient(lossW, self.W2)
-        grads['b1'] = numerical_gradient(lossW, self.b1)
-        grads['b2'] = numerical_gradient(lossW, self.b2)
+        grads['W1'] = numerical_gradient(lossW, self.params['W1'])
+        grads['W2'] = numerical_gradient(lossW, self.params['W2'])
+        grads['b1'] = numerical_gradient(lossW, self.params['b1'])
+        grads['b2'] = numerical_gradient(lossW, self.params['b2'])
         return grads
 
 def sigmoid(x) :
     return 1/(1+np.exp(-x))
 
 def softmax(x) :
-    max_val = max(x)
-    numerator=np.exp(x-max_val)
+    max_val = np.max(x, axis=1)
+    numerator=np.exp(x-max_val.reshape(max_val.shape[0],1))
     denominator=np.sum(numerator)
     return numerator/denominator
 
