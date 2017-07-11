@@ -74,16 +74,16 @@ import numpy as np
 # net_input=np.dot(input,weight)
 # print(net_input)
 
-print('\n벡터 원소에 접근')
-a=np.array([1,2,3,4,5])
-print(a.size) # 벡터 사이즈
-print(a[3])
-
-print('\n벡터, 매트릭스의 복사')
-b=a
-c=a[:]
-print(id(a), id(b), id(c))
-d=np.array([[1,2],[3,4]])
-e=d
-f=d[:]
-print(id(d),id(e),id(f))
+# print('\n벡터 원소에 접근')
+# a=np.array([1,2,3,4,5])
+# print(a.size) # 벡터 사이즈
+# print(a[3])
+#
+# print('\n벡터, 매트릭스의 복사')
+# b=a
+# c=a[:]
+# print(id(a), id(b), id(c))
+# d=np.array([[1,2],[3,4]])
+# e=d
+# f=d[:]
+# print(id(d),id(e),id(f))
