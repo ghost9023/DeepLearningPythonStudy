@@ -75,3 +75,33 @@ def numerical_gradient(f, x) :
         x=x.reshape(x.shape[1],)
         grad=grad.reshape(x.shape[0],)
     return grad
+
+# def numerical_gradient2(f, x) :
+#     is_vector = False
+#     h=1e-4
+#     if len(x.shape) == 1 :
+#         x=x.reshape(1,x.shape[0])
+#         is_vector = True
+#     grad=np.zeros(x.shape)
+#     for i in range(x.shape[0]) :
+#         for j in range(x.shape[1]) :
+#             tempX = x[i,j]
+#             x[i,j] = tempX+h
+#             fh1=f(x)
+#
+#             x[i,j] = tempX-h
+#             fh2=f(x)
+#
+#             partial_gradient=(fh1-fh2)/(2*h)
+#             grad[i,j]=partial_gradient
+#             x[i,j]=tempX
+#     if is_vector :
+#         x=x.reshape(x.shape[1],)
+#         grad=grad.reshape(x.shape[0],)
+#     return grad
+#
+# def sample_func(x) :
+#     return x[0]**2 + x[1]**2
+# x=np.array([-3,4])
+# print(x.reshape(1,x.shape[0]))
+# # print(numerical_gradient2(sample_func, x))
