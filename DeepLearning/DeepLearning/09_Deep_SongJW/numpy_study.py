@@ -1,5 +1,49 @@
 import numpy as np
 
+'''
+벡터, 행렬의 생성, 차원수, 형상
+'''
+# A=np.array([1,2,3,4])
+# print(A)
+# print(np.ndim(A))   # ndim() : 차원 반환
+# print(A.shape)  # shape : 튜플 형태로 형상 반환. 벡터의 경우 반환된 튜플이 한개의 원소만 갖음. (4,)
+# print(A.shape[0])
+
+# B=np.array([[1,2],[3,4],[5,6]])
+# print(B)
+# print(np.ndim(B)) # 2
+# print(B.shape)    # (3,2)
+
+'''
+행렬의 내적
+'''
+# A=np.array([[1,2],[3,4]])
+# print(A.shape)
+# B=np.array([[5,6],[7,8]])
+# print(B.shape)
+# print(np.dot(A,B))  # dot(A,B) : 내적. 일반적으로 dot(A,B) != dot(B,A)
+
+A=np.array([[1,2,3],[4,5,6]])
+print(A.shape)
+B=np.array([[1,2],[3,4],[5,6]])
+print(B.shape)
+print(np.dot(A,B))
+print(np.dot(B,A))  # 2x3 X 3x2 = 2x2, 3x2 X 2x3 = 3x3
+
+####################################################################################
+#
+# print('\n원소접근')
+# a=np.array([[51, 55],[14, 19],[0,4]])
+# print(a)
+# print(a[0])
+# print(a[0][1])
+# b=np.array([1,2,3,4,5,6])
+# print(b[np.array([0,1,3])]) # 인덱스벡터로 벡터 원소에 접근
+# x=np.array([10,20,25,30,5,10])
+# print(x[x>15])  # 원소에 조건걸기
+# print(x>15) # bool 벡터 생성
+
+
 # print('create array\n')
 # a=np.array([1,5])
 # b=np.array([[1,2],[2,3]])
@@ -36,8 +80,8 @@ import numpy as np
 # print('기타')
 # print(x1**2)
 # print(x1>=2)
-# print(x2.flatten())
-# print(x2.reshape(4,1))
+# print(x2.flatten())   # 메트릭스를 벡터로 평탄화
+# print(x2.reshape(4,1))    # 메트릭스 형태 변환
 # print(x2.reshape(1,4))
 #
 # print('쌓기')
