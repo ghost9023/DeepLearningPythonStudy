@@ -84,7 +84,7 @@ def init_mnist():
     print("Done!")
 
 
-def _change_one_hot_label(X):
+def _change_ont_hot_label(X):
     T = np.zeros((X.size, 10))
     for idx, row in enumerate(T):
         row[X[idx]] = 1
@@ -93,6 +93,20 @@ def _change_one_hot_label(X):
 
 
 def load_mnist(normalize=True, flatten=True, one_hot_label=False):
+    """MNIST 데이터셋 읽기
+
+    Parameters
+    ----------
+    normalize : 이미지의 픽셀 값을 0.0~1.0 사이의 값으로 정규화할지 정한다.
+    one_hot_label : 
+        one_hot_label이 True면、레이블을 원-핫(one-hot) 배열로 돌려준다.
+        one-hot 배열은 예를 들어 [0,0,1,0,0,0,0,0,0,0]처럼 한 원소만 1인 배열이다.
+    flatten : 입력 이미지를 1차원 배열로 만들지를 정한다. 
+
+    Returns
+    -------
+    (훈련 이미지, 훈련 레이블), (시험 이미지, 시험 레이블)
+    """
     if not os.path.exists(save_file):
         init_mnist()
 
@@ -105,8 +119,8 @@ def load_mnist(normalize=True, flatten=True, one_hot_label=False):
             dataset[key] /= 255.0
 
     if one_hot_label:
-        dataset['train_label'] = _change_one_hot_label(dataset['train_label'])
-        dataset['test_label'] = _change_one_hot_label(dataset['test_label'])
+        dataset['train_label'] = _change_ont_hot_label(dataset['train_label'])
+        dataset['test_label'] = _change_ont_hot_label(dataset['test_label'])
 
     if not flatten:
         for key in ('train_img', 'test_img'):

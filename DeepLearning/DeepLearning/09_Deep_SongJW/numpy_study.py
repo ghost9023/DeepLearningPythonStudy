@@ -23,12 +23,28 @@ import numpy as np
 # print(B.shape)
 # print(np.dot(A,B))  # dot(A,B) : 내적. 일반적으로 dot(A,B) != dot(B,A)
 
-A=np.array([[1,2,3],[4,5,6]])
-print(A.shape)
-B=np.array([[1,2],[3,4],[5,6]])
-print(B.shape)
-print(np.dot(A,B))
-print(np.dot(B,A))  # 2x3 X 3x2 = 2x2, 3x2 X 2x3 = 3x3
+# A=np.array([[1,2,3],[4,5,6]])
+# print(A.shape)
+# B=np.array([[1,2],[3,4],[5,6]])
+# print(B.shape)
+# print(np.dot(A,B))
+# print(np.dot(B,A))  # 2x3 X 3x2 = 2x2, 3x2 X 2x3 = 3x3
+
+# 에러. 앞 행렬의 열 수와 뒷 행렬의 행 수가 일치하지 않음
+# A=np.array([[1,2,3],[4,5,6]])
+# C=np.array([[1,2], [3,4]])
+# print(C.shape)
+# print(A.shape)
+# print(np.dot(A,C))    # ValueError: shapes (2,3) and (2,2) not aligned: 3 (dim 1) != 2 (dim 0)
+                        # index : 행 = 0, 열 = 1
+
+# # 행렬과 벡터의 곱.
+# A=np.array([[1,2],[3,4],[5,6]])
+# print(A.shape)
+# B=np.array([7,8])
+# print(B.shape)
+# C=np.dot(A,B)
+# print(C, C.shape)
 
 ####################################################################################
 #
