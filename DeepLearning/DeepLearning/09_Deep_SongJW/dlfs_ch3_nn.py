@@ -1,5 +1,8 @@
 import numpy as np
+import sys, os
+sys.path.append(os.pardir)
 from common.activation_functions import sigmoid, identity_function
+
 
 '''
 신경망의 내적
