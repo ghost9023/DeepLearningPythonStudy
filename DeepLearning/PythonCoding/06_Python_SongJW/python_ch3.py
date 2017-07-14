@@ -121,3 +121,157 @@ python ch.3 - sequence
  - mutable. 순서 없음. 요소는 키 : 값 쌍. 키는 immutable 객체여야 가능.
 '''
 
+# # 딕셔너리 생성 : {}
+# empty_dict1 = {}
+# print(empty_dict1)
+# bierce = {'day':'A period of twenty-four hours, mostly misspent',
+#           'positive':'Mistaken at the top of one\'s voice',
+#           'misfortune':'The kind of fortune that never misses'}
+# print(bierce)
+#
+# # 딕셔너리로 변환 : dict()
+# lol = [['a','b'], ['c','d'], ['e', 'f']]    # 튜플, 리스트의 어떤 조합도 가능
+# print(dict(lol))
+# lolol = ((1,2),(3,4),(5,6))
+# print(dict(lolol))
+# lololol = ['ab','cd','12']  # 두개의 문자만 있는 경우 둘을 분리해서 키, 값으로 사용. (2개 초과는 불가)
+# print(dict(lololol))
+#
+# # 항목 추가 / 변경 : dict[key]
+# dict1 = {1:2, 3:4, 5:6, 7:8}
+# print(dict1)
+# print(dict1[1])
+# dict1[1] *= 10
+# print(dict1)
+# dict1[100] = 100
+# print(dict1)
+#
+# # 딕셔너리 결합 : update()
+# dict2 = {'a':'A', 'b':'B', 'c':'C', 'd':'D'}
+# dict3 = {'e':'E', 'f':'F'}
+# dict2.update(dict3)
+# print(dict2)
+#     # 결합하려는 두 딕셔너리에 같은 키가 있다면 뒤에 이어붙이려는 딕셔너리에 있는 값이 최종적으로 키에 할당된다.
+#
+# # 항목 삭제 : del
+# del dict2['f']
+# print(dict2)
+#
+# # 모든 항목 삭제하기 : clear()
+# dict1.clear(); dict2.clear(); dict3.clear()
+# print(dict1, dict2, dict3)
+#
+# # 키의 존재 확인 : key in dict
+# dict1 = {'a':'A', 'b':'B', 'c':'C'}
+# print('a' in dict1, 'd' in dict1)
+#
+# # 값 얻기 : dict[key]
+# print(dict1['a'])   # 없는 키의 경우 에러발생
+# print(dict1.get('a'), dict1.get('d'))   # dict.get(key) : 키에 대응하는 값 반환. 없는 키라면 None 반환
+#
+# # 모든 키, 값, 키값쌍 얻기 : dict.keys() / dict.values() / dict.items()
+# print(dict1.keys()) # dict_keys(['a', 'b', 'c']) : iterable
+# print(dict1.values())
+# print(dict1.items())
+#
+# # 할당 : = , 복사 : dict.copy(), dict()
+# dict2 = dict1
+# print(dict1, dict2)
+# dict2['a'] = '@'
+# print(dict1, dict2)
+# dict1['a'] = 'A'
+# dict3 = dict1.copy()
+# dict3['a'] = '@'
+# print(dict1, dict3)
+# dict4 = dict(dict1)
+# dict4['a'] = '@'
+# print(dict1, dict4)
+
+'''
+set
+ - 값 없는 딕셔너리. 요소는 유일하며 순서 없음. 존재여부만 판단할때 사용.
+'''
+
+# set 생성 : set(), {}
+empty_set = set()
+print(empty_set)
+even_number = {0, 2, 4, 6, 8}
+odd_number = set([1, 9, 5, 7, 3])   # set 생성시 리스트의 요소 순서와 다르게 생성된다.
+print(even_number, odd_number)
+set1 = {1,1,3,5,3,7,9,9,7}
+print(set1) # 중복 모두 제거된다.
+
+# set 으로 변경하기 : set()
+print(set('letters'))   # 역시 중복 't' 제거
+dict1 = {'a':'A', 'b':'B', 'c':'C'}
+print(set(dict1))   # key 들만 set 으로 만들어진다. 리스트, 튜플도 모두 set 으로 변경가능.
+
+# 요소 확인 : elem in set
+dict_drinks = {'martini' : {'vodka', 'vermouth'},
+               'black russian' : {'vodka', 'kahlua'},
+               'white russian' : {'cream', 'kahlua', 'vodka'},
+               'manhattan' : {'rye', 'vermouth', 'bitters'},
+               'screwdriver' : {'orange juice', 'vodka'}}
+for name, contents in dict_drinks.items() : # dict.items() 는 키, 값 쌍이 반환되므로 두개의 변수로 unpacking?
+    if 'vodka' in contents :    # vodka 가 첨가된 주류의 이름을 출력함.
+        print(name)
+
+# 교집합 : 셋 인터섹션 연산자 &, set.intersection(set)
+# 두 set 을 비교하여 같은 요소를 갖고있다면 True, 아니면 False 반환
+print()
+for name, contents in dict_drinks.items() :
+    if contents & {'vermouth', 'orange juice'} :    # {'vermouth', 'orange juice'} 와 contents set 의 교집합 찾음.
+        print(name)                                 # 교집합이 공집합이 아니라면 True 판정, 공집합이라면 False 판정.
+
+a = {1, 2, 3, 5}
+b = {0, 2, 3, 4}
+print(a & b)    # 교집합 출력
+print(a.intersection(b))    # 교집합 출력
+a.intersection_update(b)    # 교집합으로 set 을 덮어씀
+print(a)
+
+# 합집합 : 유니온 set.union(set),  |
+print()
+a = {1,2,3,5}
+b = {0,2,3,4}
+print(a|b)  # 합집합
+print(a.union(b))
+
+# 차집합 : set.difference(set), -
+print()
+a = {1,2,3,5}
+b = {0,2,3,4}
+print(a-b)
+print(a.difference(b))
+a.difference_update(b)
+print(a)    # 차집합으로 set 을 덮어씀
+
+# 대칭 차집합 : 두 set 에서 한쪽에만 들어있는 원소들 symmetric_difference, ^
+print()
+a = {1,2,3,5}
+b = {0,2,3,4}
+print(a^b)  # {0, 1, 4, 5}
+print(a.symmetric_difference(b))    # 차집합과는 다르게 a-b, b-a 의 합집합.
+print(a.difference(b).union(b.difference(a)))
+
+# 부분집합 : <=, issubset()
+print()
+a = {1,2,3}
+b = {0,1,2,3,4,5}
+print(a<=b, a.issubset(b))
+
+# 진부분집합 proper subset : <
+# 부분집합을 포함하고 그 이상의 요소들도 필요
+print()
+print(a<b, a<a) # a 는 a 의 서브셋이지만 그 외의 요소는 없기에 진부분집합이 아님.
+
+# 슈퍼셋 : 서브셋의 반대 : >=, issuperset()
+print()
+print(b>=a, b.issuperset(a))
+
+print(a<b, b>a) # a는 b의 proper subset, b 는 a 의 proper superset
+
+'''
+딕셔너리의 키
+ - immutable 한 객체만이 딕셔너리의 키가 될 수 있다. 즉, 리스트, 셋, 딕셔너리는 키가 될 수 없다.
+'''
