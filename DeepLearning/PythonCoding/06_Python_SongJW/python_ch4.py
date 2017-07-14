@@ -382,3 +382,6 @@ def dictttt(**kwargs):
     print(kwargs)
 run_something3(dictttt, a=1, b=2, c=3)
 
+'''
+내부함수
+'''
