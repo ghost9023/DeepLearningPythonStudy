@@ -358,30 +358,191 @@ docstring
 '''
 함수 이것저것
 '''
-def answer():
-    print(42)
-def run_something(func) :
-    func()
-run_something(answer)   # 함수를 인자로 받아 실행한다. 함수호출시 괄호가 함수를 호출한다는 의미이고
-                        # 함수명은 그저 객체로서의 함수를 가리키는 이름이다.
-print(type(run_something), type(answer))    # <class 'function'>
-
-def returnnnn(*args):
-    print(args)
-returnnnn((1,2,3,4))    # 나열된 값이 아닌 튜플 자체가 들어가면 튜플이 하나의 요소로 취급됨
-
-def run_something2(func, *args) :   # 위치매개변수 모으기
-    return func(*args)  # 위 예제에서처럼 튜플이 요소로 취급되지 않도록 *args 로 전달한다.
-def summm(*args) :
-    return sum(args)
-print(run_something2(summm, 1,2,3,4,5))
-
-def run_something3(func, **kwargs): # 키워드매개변수 모으기
-    return func(**kwargs)
-def dictttt(**kwargs):
-    print(kwargs)
-run_something3(dictttt, a=1, b=2, c=3)
+# def answer():
+#     print(42)
+# def run_something(func) :
+#     func()
+# run_something(answer)   # 함수를 인자로 받아 실행한다. 함수호출시 괄호가 함수를 호출한다는 의미이고
+#                         # 함수명은 그저 객체로서의 함수를 가리키는 이름이다.
+# print(type(run_something), type(answer))    # <class 'function'>
+#
+# def returnnnn(*args):
+#     print(args)
+# returnnnn((1,2,3,4))    # 나열된 값이 아닌 튜플 자체가 들어가면 튜플이 하나의 요소로 취급됨
+#
+# def run_something2(func, *args) :   # 위치매개변수 모으기
+#     return func(*args)  # 위 예제에서처럼 튜플이 요소로 취급되지 않도록 *args 로 전달한다.
+# def summm(*args) :
+#     return sum(args)
+# print(run_something2(summm, 1,2,3,4,5))
+#
+# def run_something3(func, **kwargs): # 키워드매개변수 모으기
+#     return func(**kwargs)
+# def dictttt(**kwargs):
+#     print(kwargs)
+# run_something3(dictttt, a=1, b=2, c=3)
 
 '''
 내부함수
+ 함수 내부에 또 다른 함수를 정의. 함수 내부에서의 코드 중복을 피하기 위해 사용.
+ 특정한 함수 내부에서만 여러번 사용되는 코드를 중복 없이 수행할때 이용.
 '''
+#
+# def outer(a, b) :
+#     def inner(c, d):
+#         return c+d
+#     return inner(a, b)
+#
+# print(outer(1,3))
+#
+# def knights(saying):
+#     def inner(quote):
+#         return 'We are the knights who say : "%s"' % quote
+#     return inner(saying)
+#
+# print(knights('치킨!'))
+
+'''
+클로져 closure
+ 다른 함수에 의해 동적으로 생성되는,
+ 바깥함수로부터 생성된 변수값을 저장하고 변경하는 함수.
+'''
+
+# def knights2(saying):
+#     def inner2():
+#         return 'We are the knights who say : "%s"' % saying
+#     return inner2
+#
+# # knights2 함수는 내부 함수인 inner2 를 호출하지 않고 함수 자체를 반환함
+# # inner2 함수는 인자를 전달받지 않지만 knights2 함수의 매개변수 saying 의 값에 접근가능함
+# # 결과적으로 knight2 함수는 saying 의 값을 담은 inner2 함수 자체를 반환하게 됨
+#
+# a = knights2('피자!')
+# b = knights2('치킨!')
+# print(type(a), type(b)) # 둘다 함수
+# print(a,b)
+# c = a()
+# d = b()
+# print(c,'\n',d) # 다른 값을 저장한 결과값이 나온다.
+
+'''
+익명함수 lambda()
+ 람다함수는 단일문으로 표현되는 익명함수.
+'''
+
+# lst = ['ho', 'ha', 'he']
+#
+# def edit_story(words, func) :
+#     for word in words:
+#         print(func(word))
+# def enliven(word):
+#     return word.capitalize() + '!'
+# edit_story(lst, enliven)
+#
+# # 새로 함수를 정의하지 않고 임시적인 함수를 사용할 수 있다.
+# edit_story(lst, lambda word : word.capitalize()+'!')
+#
+# # 조건문도 가능하다.
+# lam_func = lambda x : x+1
+# print(lam_func(3))
+# lam_func2 = lambda x : x if x>0 else -x
+# print(lam_func2(3), lam_func2(-3))
+
+'''
+제너레이터
+ 파이썬의 시퀀스를 생성하는 객체. 전체 시퀀스르 생성해 메모리에 올릴 필요 없이 순회 가능.
+ 이터레이터에 대한 데이터 소스로 자주 사용된다. range() 가 그 예.
+'''
+# # 제너레이터는 순회할때마다 마지막으로 호출된 항목을 기억하고 다음 값을 반환.
+# print(sum(range(1,11)))
+#
+# # 복습 : 제너레이터 컴프리헨션 ex) (i for i in ['a', 'b', 'c'])
+# print((i for i in ['a', 'b', 'c']))
+# a = (i for i in ['a', 'b', 'c'])
+# for i in a :
+#     print(i)
+#
+# # 제너레이터 컴프리헨션 코드가 복잡해진다면 제너레이터 함수를 사용한다.
+# def my_range(first = 0, last = 10, step = 1):
+#     number = first
+#     while number < last :
+#         yield number
+#         number += step
+#         # 리턴절 없음
+#
+# print(my_range)
+# ranger = my_range(1, 5) # 제너레이터 함수에 인자를 넘겨주고 반환받는데 리턴절 없음.
+# print(ranger)   # 제너레이터
+#
+# for x in ranger :   # 순회가 가능해진다.
+#     print(x)
+
+'''
+데커레이터
+ 이미 정의된 함수를 수정할때 사용.
+ 완전히 정의를 수정하기보다는 정의된 함수들에 똑같은 기능을 추가하는 용도로 사용한다.
+'''
+
+def decorator_func(f):
+    def return_func(*args, **kwargs):
+        print('func_name :', f.__name__)
+        print('position arguments :', args)
+        print('keyword arguments :', kwargs)
+        result = f(*args, **kwargs)
+        print('result =', result)
+        return result
+    return return_func
+
+def add_func(a,b):
+    return a + b
+
+add_func = decorator_func(add_func)
+add_func(3, 4)
+add_func(a=3, b=4)
+
+print()
+
+@decorator_func # 함수 정의 위에 @데코레이터_이름 으로 데코레이터를 적용시킬 수 있다.
+def mult_func(a, b):
+    return a * b
+
+mult_func(3,4)
+
+print()
+def square_it(f) :
+    def return_func(*args, **kwargs):
+        result = f(*args, **kwargs)
+        return result ** 2
+    return return_func
+
+@square_it
+def mult_func(a, b):
+    return a * b
+
+print(mult_func(3,4))
+
+# 데코레이터를 중첩시킬수도 있다. 이때는 함수정의와 가장 가까운 데코레이터부터 적용된다.
+print()
+@decorator_func
+@square_it
+def mult_func(a, b):
+    return a * b
+
+print(mult_func(3,4))   # 두수의 곱을 제곱한 후 인자, 결과를 출력하므로 결과와 출력이 일치
+
+print()
+@square_it
+@decorator_func
+def mult_func(a, b):
+    return a * b
+
+print(mult_func(3,4))   # 인자, 결과를 출력하고 제곱을 하므로 결과와 출력이 일치하지 않음.
+
+'''
+def 라는 구문이 "함수 객체를 생성하는" 구문이다.
+내부함수, 클로져, 데코레이터함수 모두 내부에 def 구분을 포함하는데
+함수가 수행될때 내부의 def 구문이 실행되며 새로운 함수 객체를 메모리에 올리게된다.
+그렇기때문에 클로져나 데코레이터가 바깥함수의 데이터를 가질 수 있는 것.
+매개변수로 인자를 받는 것이 아니기때문에 바깥함수의 데이터를 변수로 가리키는 것.
+'''
+
