@@ -483,60 +483,60 @@ docstring
  완전히 정의를 수정하기보다는 정의된 함수들에 똑같은 기능을 추가하는 용도로 사용한다.
 '''
 
-def decorator_func(f):
-    def return_func(*args, **kwargs):
-        print('func_name :', f.__name__)
-        print('position arguments :', args)
-        print('keyword arguments :', kwargs)
-        result = f(*args, **kwargs)
-        print('result =', result)
-        return result
-    return return_func
-
-def add_func(a,b):
-    return a + b
-
-add_func = decorator_func(add_func)
-add_func(3, 4)
-add_func(a=3, b=4)
-
-print()
-
-@decorator_func # 함수 정의 위에 @데코레이터_이름 으로 데코레이터를 적용시킬 수 있다.
-def mult_func(a, b):
-    return a * b
-
-mult_func(3,4)
-
-print()
-def square_it(f) :
-    def return_func(*args, **kwargs):
-        result = f(*args, **kwargs)
-        return result ** 2
-    return return_func
-
-@square_it
-def mult_func(a, b):
-    return a * b
-
-print(mult_func(3,4))
-
-# 데코레이터를 중첩시킬수도 있다. 이때는 함수정의와 가장 가까운 데코레이터부터 적용된다.
-print()
-@decorator_func
-@square_it
-def mult_func(a, b):
-    return a * b
-
-print(mult_func(3,4))   # 두수의 곱을 제곱한 후 인자, 결과를 출력하므로 결과와 출력이 일치
-
-print()
-@square_it
-@decorator_func
-def mult_func(a, b):
-    return a * b
-
-print(mult_func(3,4))   # 인자, 결과를 출력하고 제곱을 하므로 결과와 출력이 일치하지 않음.
+# def decorator_func(f):
+#     def return_func(*args, **kwargs):
+#         print('func_name :', f.__name__)
+#         print('position arguments :', args)
+#         print('keyword arguments :', kwargs)
+#         result = f(*args, **kwargs)
+#         print('result =', result)
+#         return result
+#     return return_func
+#
+# def add_func(a,b):
+#     return a + b
+#
+# add_func = decorator_func(add_func)
+# add_func(3, 4)
+# add_func(a=3, b=4)
+#
+# print()
+#
+# @decorator_func # 함수 정의 위에 @데코레이터_이름 으로 데코레이터를 적용시킬 수 있다.
+# def mult_func(a, b):
+#     return a * b
+#
+# mult_func(3,4)
+#
+# print()
+# def square_it(f) :
+#     def return_func(*args, **kwargs):
+#         result = f(*args, **kwargs)
+#         return result ** 2
+#     return return_func
+#
+# @square_it
+# def mult_func(a, b):
+#     return a * b
+#
+# print(mult_func(3,4))
+#
+# # 데코레이터를 중첩시킬수도 있다. 이때는 함수정의와 가장 가까운(바로 위의) 데코레이터부터 적용된다.
+# print()
+# @decorator_func
+# @square_it
+# def mult_func(a, b):
+#     return a * b
+#
+# print(mult_func(3,4))   # 두수의 곱을 제곱한 후 인자, 결과를 출력하므로 결과와 출력이 일치
+#
+# print()
+# @square_it
+# @decorator_func
+# def mult_func(a, b):
+#     return a * b
+#
+# print(mult_func(3,4))   # 인자, 결과를 출력하고 제곱을 하므로 결과와 출력이 일치하지 않음.
 
 '''
 def 라는 구문이 "함수 객체를 생성하는" 구문이다.
@@ -546,3 +546,81 @@ def 라는 구문이 "함수 객체를 생성하는" 구문이다.
 매개변수로 인자를 받는 것이 아니기때문에 바깥함수의 데이터를 변수로 가리키는 것.
 '''
 
+'''
+4.10
+네임스페이스와 스코프
+
+ 네임스페이스의 이름은 유일. 이름은 네임스페이스에 따라서 다른 의미를 갖는다.
+ 메인프로그램의 네임스페이스 : 전역변수
+ 각 함수의 네임스페이스 : 각각의 함수만의 네임스페이스 생성
+'''
+
+# # 예제 1. 함수 내부에서 전역변수에 접근
+#
+# global_var = 3
+#
+# def func1():
+#     print(global_var)
+# func1() # 전역변수인 global_var 를 출력한다. 가능하다.
+#
+# # def func2():
+# #     '''
+# #     의도 : 전역변수 global_var 의 값을 출력하고, 값을 수정하고, 다시 출력하려고 함.
+# #     실제 : 아직 값이 할당되지 않은 gloabl_var 의 값을 출력하고 그 후에야 값을 배정, 다시 출력
+# #
+# #     UnboundLocalError: local variable 'global_var' referenced before assignment
+# #
+# #     의도와 다르게 함수가 정의될때 'global_var=5' 실행문이 있으므로
+# #         함수의 지역변수 globar_var 를 참조하게됨.
+# #      따라서 값이 배정되기 전에 globar_var 를 참조하기때문에 에러가 발생.
+# #     '''
+# #     print('before modify :',global_var)
+# #     global_var = 5
+# #     print('after modify :', global_var)
+# # func2()
+#
+# # 예제 2. 함수내에서 전역변수에 접근하려면?
+#
+# def func3():
+#     global global_var   # 전역변수인 global_var 에 접근하겠다고 명시적으로 global 키워드를 작성한다.
+#     print('before modify :', global_var)
+#     global_var = 5
+#     print('after modify :', global_var)
+#
+# func3()
+#
+# # locals() & globals()
+#     # locals() : 로컬 네임스페이스의 내용이 담긴 딕셔너리 반환
+#     # globals() : 글로벌 네이슴페이스의 내용이 담긴 딕셔너리 반환
+#
+# def func4():
+#     A = 'a'
+#     B = 'b'
+#     C = 'c'
+#     print(locals())
+#
+# a = 'A'
+# b = 'B'
+# c = 'C'
+#
+# func4() # 로컬변수들이 담긴 딕셔너리가 출력된다.
+# print(globals())    # 선언된 함수, docstring, 전연벽수, __name__ 등의 변수 등 별게 다 들어있는 딕셔너리 출력.
+
+'''
+4.10.1 이름에 _ 와 __ 사용
+ 
+ __??__ 형태의 변수명은 예약된 키워드. 변수선언시 사용하지 않는다.
+    ex)
+        함수의 이름 : function.__name__
+        모듈의 이름 : __name__ : 특히 메인 모듈(임포트가 아닌 직접 실행되는 모듈) 은 __name__ == '__main__'
+        함수의 docstring : functions.__doc__
+'''
+
+def underbar_var():
+    '''
+    docstring~~
+    '''
+    print(underbar_var.__name__)
+    print(underbar_var.__doc__)
+
+underbar_var()  # 차례로 underbar_var의 함수명과 docstring 이 출력된다.
