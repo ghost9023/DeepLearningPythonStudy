@@ -615,12 +615,78 @@ def 라는 구문이 "함수 객체를 생성하는" 구문이다.
         모듈의 이름 : __name__ : 특히 메인 모듈(임포트가 아닌 직접 실행되는 모듈) 은 __name__ == '__main__'
         함수의 docstring : functions.__doc__
 '''
+#
+# def underbar_var():
+#     '''
+#     docstring~~
+#     '''
+#     print(underbar_var.__name__)
+#     print(underbar_var.__doc__)
+#
+# underbar_var()  # 차례로 underbar_var의 함수명과 docstring 이 출력된다.
 
-def underbar_var():
-    '''
-    docstring~~
-    '''
-    print(underbar_var.__name__)
-    print(underbar_var.__doc__)
+'''
+4.11 에러처리하기
+    
+    파이썬에서는 에러를 예외 exception 이라고 한다.
+    실패할 가능성이 있는 코드를 수행할때 예외를 처리하기 위해 에외처리가 필요하다.
+    예외가 발생할때 이를 처리하여 프로그램을 중단시키지 않거나,
+    처리하지 못하더라도사용자에게 어떤 문제가 발생했는지를 알리는게 목적이다.
+'''
 
-underbar_var()  # 차례로 underbar_var의 함수명과 docstring 이 출력된다.
+# short_lst = [1,2,3]
+# # print(short_lst[5]) # IndexError: list index out of range 가 발생한다.
+#
+# # 예외처리 1. 모든 종류의 예외 처리
+#     # 예외처리를 하는 경우. try 절의 실행문에 에러가 발생하지 않는다면 except 절을 생략하고
+#     # 에러가 발생하는 경우 except 절의 실행문을 수행한다.
+# try :
+#     print(short_lst[5])
+# except :    # 별다른 표기가 없이 except : 만 있다면 모든 종류의 예외를 처리한다.
+#     print('exception 발생')
+#     print('0 ~ 2 사이의 인덱스를 입력하세요.')
+#
+# # 예외처리 2. 특정 종류의 예외 처리 - 예외의 종류마다 다른 처리를 한다.
+#     # except 특정종류의예외 as 예외를참조할변수명 :
+# try :
+#     n = input('인덱스를 입력 : ')
+#     print(short_lst[int(n)])
+# except IndexError as ind_e :
+#     print(ind_e, ': 0~2 범위의 index 를 입력하세요.')
+# except ValueError as val_e :
+#     print(val_e, ': 숫자형 값을 입력하세요.')
+#
+#     # 리스트의 인덱스 범위 밖의 값을 입력하면 IndexError : list index out of range 발생
+#     # 숫자형이 아닌 값을 입력하면 int(n) 에서 ValueError : invalid literal for int() ... 발생
+#     # 위 두개의 예외를 각각 다른 except 절로 처리하여준다.
+
+'''
+4.12 예외 만들기
+
+다양한 예외는 이미 파이썬 표준 라이브러리에 정의되어있음. ex) ValueError, IndexError, ...
+표준 라이브러리에 정의된 상황 외에도 사용자가 직접 예외를 정의할 수도 있다.
+'''
+# 예외는 클래스. Exception 클래스의 자식이다.
+
+# 예제. 예외 만들기 - 숫자가 입력되면 예외 발생시키기
+
+class IHateNumber(Exception) :
+    pass    # 어떤 행동도 안한다.
+
+# while True :
+#     n = input('숫자는 입력하지 마세요. : ')
+#     if n.isnumeric() :
+#         raise IHateNumber(n)
+#     print(n)
+
+    # 예외 클래스에 n 을 인자로 넘겨줄때
+    # 숫자 3을 입력하면 __main__.IHateNumber: 3 과 같이 정의한 예외와 함께 어떤 값을 입력했는지 나온다.
+
+try :
+    n = input()
+    if n.isnumeric():
+        raise IHateNumber(n)
+except IHateNumber as e :
+    print(e)
+
+    # 예외 클래스에 별도의 코드 작성이 없다면 예외를 발생시킬때 넘겨주는 인자가 예외의 내용이 된다.
