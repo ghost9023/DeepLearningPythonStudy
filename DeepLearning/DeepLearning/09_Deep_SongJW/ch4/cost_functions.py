@@ -29,8 +29,8 @@ y2 = np.array([.1, .05, .1, .0, .05, .1, .0, .6, .0, .0])    # 예측 : 7 (확�
 def MeanSquaredError(y, t):
     return np.sum((y - t) ** 2)/2
 
-print(MeanSquaredError(y1, t))   # 정답 예측 - 0.0975
-print(MeanSquaredError(y2, t))   # 오답 예측 - 0.5975
+# print(MeanSquaredError(y1, t))   # 정답 예측 - 0.0975
+# print(MeanSquaredError(y2, t))   # 오답 예측 - 0.5975
 
     # 잘못된 예측을 하는 경우 MSE 값이 커지게된다.
     # 정확한 값을 예측할뿐만 아니라 더 높은 확률을 부여할수록 오차는 작아지게된다.
@@ -74,11 +74,11 @@ def CrossEntropyError_label(y, t):
         # 벡터x, 벡터z 의 대응하는 원소들을 인덱스로 갖는 y의 요소들이 나열된 벡터를 얻게된다.
         # 정리하자면 y[np.arange(batch_size), t] 는 t 에 담긴 라벨에 해당하는 신경망의 출력(확률값)이 나열된 벡터
 
-print(CrossEntropyError(y1, t))
-    # 정답 예측 - 0.510825457099
-print(CrossEntropyError(y2, t))
-    # 오답 예측 - 2.30258409299
-    # 이 값은 오답에 높은 확률을 부여했기때문이 아닌 정답에 낮은 확률을 부여했기 때문에 계산되는 오차.
+# print(CrossEntropyError(y1, t))
+#     # 정답 예측 - 0.510825457099
+# print(CrossEntropyError(y2, t))
+#     # 오답 예측 - 2.30258409299
+#     # 이 값은 오답에 높은 확률을 부여했기때문이 아닌 정답에 낮은 확률을 부여했기 때문에 계산되는 오차.
 
 '''
 비용함수, 손실함수를 사용하는 이유
