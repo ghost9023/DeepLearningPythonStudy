@@ -25,7 +25,7 @@ type('abc')
 # 대문자(A~Z)
 # 숫자(0~9)
 # 언더스코어(_)
-   
+
 # 변수이름은 숫자로 시작할 수 없다.
 # 파이썬은 언더스코어로 시작하는 이름을 특별한 방법으로 처리
 # 유효한 이름의 예
@@ -230,3 +230,56 @@ letters[:21:5]    # 처음부터 20번째까지 4스텝씩 건너뛰면서 문�
 
 # 편리한 파이썬의 슬라이스는 백스텝을 할 수 있다.
 letters[::-1]
+letters[-50:]   # 광범위하게 조사하는 방식, 실제 -50번째 오프셋은 없지만 그냥 가장 처음인 것부터 시작한다.
+letters[-50]    # error
+letters[-51:-50]
+letters[:70]    # 광범위하게 조사, 위와 원리 같음
+letters[70:71]
+
+len(letters)
+empty = ""
+len(empty)
+todos = 'get gloves,get mask,give cat vitamin,callambulance'
+todos.split(',')   # 어떤 구분자를 기준으로 하나의 문자열을 작은 문자열들의 리스트로 나눈다.
+todos.split()      # 구분자들을 지정하지 않으면 공백을 사용해 구분을 한다.
+
+# join()함수는 문자열 list를 하나의 문자열로 결합한다. split()함수와 역행
+crypto_list = ['Yeti', 'Bigfoot', 'Loch Ness Monster']
+', '.join(crypto_list)
+poem = '''All that doth flow we cannot liquid name
+Or else would fire and water be the same;
+But that is liquid which is moist and wet
+Fire that property can never get.
+Then 'tis not cold that doth the fire put out
+But 'tis the wet that makes it die, no doubt'''
+poem[:13]
+len(poem)
+poem.startswith('All')
+poem.endswith('That\'s all, folks!')
+word = 'the'
+poem.find(word)   # 이 시에서 처음으로 the가 나오는 오프셋은?
+poem.rfind(word)  # 이 시에서 마지막으로 the가 나오는 오프셋은?
+poem.count(word)
+poem.isalnum()    # 이 시는 글자와 숫자로만 이루어져 있는가?
+
+setup = 'a duck goes into a bar...'
+setup.strip('.')   # '.' 잘라내기
+setup.capitalize()   # 첫번째 단어 대문자로 만들기
+setup.title()        # 모든 단어의 첫글자를 대문자로 만들기
+setup.upper()        # 모든 글자 대문자로 만들기
+setup.lower()        # 모든 글자 소문자로 만들기
+setup.swapcase()     # 대문자는 소문자로, 소문자는 대문자로 만들기
+setup.center(30)     # 문자열을 지정한 공간에서 중앙에 배치하기
+setup.ljust(30)      # 문자열을 지정한 공간에서 왼쪽에 배치하기
+setup.rjust(30)      # 문자열을 지정한 공간에서 오른쪽에 배치하기
+
+# 대체하기: replace()
+setup.replace('duck', 'marmoset')
+setup.replace('a ','a famous ', 100)   # 뒤의 100은 처음부터 100개까지 바꾸겠다는 뜻
+setup.replace('a','a famous', 100)     # 이렇게 인용부호 안에 공간을 넣어주지 않으면 문자 중간에 들어가는 a도 바뀔 수 있으므로 조심
+
+# 연습문제
+seconds_per_hour = 60 * 60
+seconds_per_day = seconds_per_hour * 24
+seconds_per_day / seconds_per_hour    # 부동소수점 나눗셈
+seconds_per_day // seconds_per_hour   # 정수 나눗셈
