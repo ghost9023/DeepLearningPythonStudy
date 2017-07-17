@@ -137,5 +137,93 @@ float('1.0e4')
 poem = 'There was a young lady of Norway,
 '
 poem = '''There was a young lady of Norway,
-'''   # 이렇게 사용가능
+'''
+poem
+print(poem)   # 둘의 차이 확인해볼 것 print()는 인용부호를 제거하고 호출한다.
+
+bottles = 99
+base = ''
+base += 'current inventory : '
+base += str(bottles)
+base
+
+# 데이터타입 변환:str()
+str(98.6)
+str(1.0e4)
+str(True)
+# 문자열이 아닌 객체를 print()로 호출할 때, 파이썬은 내부적으로 str()함수를 사용한다.
+
+# 이스케이프 문자
+# 문자앞에 백슬래시 기호(\)를 붙임으로써 특별한 의미를 줄 수 있다.
+palindrome = 'A man, \nA plan, \nA canal:\nPanama. '
+palindrome
+print(palindrome)   # enter추가
+
+print('\tabc')
+print('a\tbc')   # tab추가
+
+# 인용부호 표현 (\', \")
+testimony = "\"I did nothing!\" he said. \"Not that either! Or the either thing.\""
+print(testimony)
+fact = "The world's largest rubber duck was 54'2\" by 65'7\" by 105'"
+# 이중 인용부호 안에 이중 인용부호를 쓰기 때문에 표시를 해줘야합니다!
+print(fact)
+
+speech ='Today we honor our friend, the backslash: \\.'
+print(speech)   # 백슬래시두번(\\)은 '백슬래시를 쓰겠다'
+
+'Relese the kraken! ' + 'At once!'
+"My word! " "A gentleman caller!"   # 리터럴 문자열은 다음과 같이 결합이 가능하다.
+
+# 파이썬 문자열 결합과 달리 print()는 각 인자 사이에 공백을 붙인다. 그리고 마지막에는 줄바꿈 문자를 붙인다.
+a = 'Duck.'
+b = a
+c = 'Grey Duck!'
+a + b + c
+print(a, b, c)
+
+start = 'Na ' * 4 + '\n'
+middle = 'Hey ' * 3 + '\n'
+end = 'Goodbye.'
+print(start + start + middle + end)
+
+# 문자추출[]
+letters = 'abcdefghijklmnopqrstucwxyz'
+letters[0]
+letters[1]
+letters[-1]
+letters[-2]
+
+letters[100]
+# 오프셋을 문자열의 길이 이상으로 지정하는 경우에는 다음과 같은 예외를 얻게 된다.
+# IndexError: string index out of range
+
+name = 'Henny'
+name[0] = 'P'
+# 문자열은 불변! 특정인덱스에 문자를 삽입하거나 변경할 수 없다.
+# TypeError: 'str' object does not support item assignment
+# 대신 아래와 같은 방법 사용가능
+name = 'Henny'
+name.replace('H', 'P')
+'P' + name[1:]   # 이런 방법도 있다.
+
+# 슬라이스: [start:end:step]
+# 슬라이스를 활용하여 문자열의 일부를 추출할 수 있다.
+# [:] 처음부터 끝까지 전체 시퀀스를 추출한다.
+# [start:] start 오프셋부터 끝까지 시퀀스를 추출한다.
+# [:end] 처음부터 (end - 1) 오프셋까지 시퀀스를 추출한다.
+# [start:end] start 오프셋부터 (end - 1) 오프셋까지 시퀀스를 추출한다.
+# [start:end:step] step만큼 문자를 건너뛰면서, start 오프셋부터 (end -1) 오프셋까지 시퀀스를 추출한다.
+
+letters = 'abcdefghijklmnopqrstucwxyz'
+letters[:]
+letters[20:]
+letters[10:]
+letters[12:15]
+letters[-3:]
+letters[18:-3]
+letters[-6:-2]
+letters[::3]      # 처음부터 3스텝씩 건너뛰면서 문자를 추출한다.
+letters[4:20:3]   # 4번째부터 19번째까지 3스텝씩 건너뛰면서 문자를 추출한다.
+letters[19::4]    # 19번째부터 끝까지 4스텝씩 건너뛰면서 문자를 추출한다.
 
