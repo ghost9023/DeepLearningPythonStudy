@@ -10,7 +10,7 @@ a = 7
 print(a)
 b = a
 print(b)
-
+#
 # 변수 혹은 리터럴값의 타입 확인
 type(a)
 type(b)
