@@ -321,7 +321,7 @@ signals_items_list = list(signals.items())  # 이것도 역시 list로 사용가
 signals_items_list
 
 
-    
+
 
 
 
