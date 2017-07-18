@@ -223,3 +223,191 @@ password
 # tuple()은 다른 객체를 튜플로 만들어준다.
 marx_list = ['Groucho', 'Chico', 'Harpo']
 tuple(marx_list)
+
+# 튜플의 장점
+# 튜플은 더 작은 공간을 활용한다.
+# 튜플은 딕셔너리 키로 사용할 수 있다.
+# 네임드 튜플은 객체의 단순한 대안이 될 수 있다.
+# 함수의 인자들은 튜플로 전달된다.
+
+# 딕셔너리
+# 딕셔너리는 항목의 순서를 따지지 않는다.
+# 오프셋으로 항목을 선택할 수 없다.
+# 키와 밸류 설정, 키는 불변
+
+# 딕셔너리 생성하기
+# {}중괄호 안에 콤마로 구분된 키와 값을 가진다.
+empty_dict = {}
+empty_dict
+
+bierce = {
+    "day": "A period of twenty-four hours, mostly misspent",
+    "positive": "MIstaken at the top of one's voice",
+    "misfortune": "The kind of fortune that never misess"
+}
+bierce   # 딕셔너리는 순서를 갖지 않는다.
+
+# 딕셔너리로 변환하기: dict()
+lol = [['a','b'], ['c','d'], ['e','f']]
+dict(lol)   # 오호라~
+lot = [('a','b'), ('c','d'), ('e','f')]
+dict(lot)
+tol = (['a','b'], ['c','d'], ['e','f'])
+dict(tol)
+los = ['ab', 'cd', 'ef']
+dict(los)
+tos = ('ab', 'cd', 'ef')
+dict(tos)
+
+# 항목 추가/변경하기: [key]
+# 키에 의해 참조되는 항목에 값을 할당하면 된다.
+# 키가 딕셔너리에 이미 존재하는 경우 그 값은 새 값으로 대체된다.
+# 키가 존재하지 않는 경우 키와 사전에 추가된다.
+
+pythons = {
+    'Chapman': 'Graham',
+    'Cleese': 'John',
+    'Idle': 'Eric',
+    'Jones': 'Terry',
+    'Palin': 'Michael'
+}
+pythons['Gilliam'] = 'Gerry'
+pythons
+pythons['Gilliam'] = 'Terry'
+pythons
+# 딕셔너리의 키는 반드시 유니크
+# 만약 키값이 두개가 같다면 마지막 키만 살아남는다.
+
+# 딕셔너리 결합하기: update()
+# update()함수는 한 딕셔너리의 키와 값들을 복사해서 다른 딕셔너리에 붙여준다.
+others = {'Marx': 'Groucho', 'Howard': 'Moe'}
+pythons.update(others)
+pythons
+# 만약 같은 키값이 결합하려는 딕셔너리에 동시에 있다면 두번째 딕셔너리의 값이 승리한다.
+
+# 키와 del로 항목 삭제하기
+del pythons['Marx']
+pythons
+
+# 모든 항목 삭제하기: clear()
+pythons.clear()
+pythons
+
+
+# in으로 키 멤버쉽 테스트하기
+'Chapman' in pythons   # True
+'Gillium' in pythons   # False
+
+# 항목얻기: [key]
+pythons['Cleese']
+pythons['Marx']   # 존재하지 않으면 예외
+# 예외뜨는 문제를 해결하는 방법 (try, except 귀찮으니까)
+
+pythons.get('Marx')     # 존재하지 않으면 아무것도 출력되지 않는다.
+pythons.get('Cleese')   # 값이 존재하면 출력
+pythons.get('Marx', 'Not a python')   # 옵션값을 지정해서 원하는 값을 출력가능, 실제로 추가되지는 않는다.
+
+# 모든 키와 밸류 얻기: keys(), values()
+# 딕셔너리의 모든 키를 얻기 위해서는 keys()를 사용한다.
+signals = {'green':'go', 'yellow':'go faster', 'red':'smile for the camera'}
+signals.keys()   # dict_keys라는 데이터 타입에 담긴다는 것을 기억해!
+signals_keys_list = list(signals.keys())      # list로 사용하기
+signals_keys_list
+signals.values()
+signals_values_list = list(signals.values())  # 이것도 역시 list로 사용가능
+signals_values_list
+signals.items()   # 튜플형태로 반환한다.
+signals_items_list = list(signals.items())  # 이것도 역시 list로 사용가능
+signals_items_list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
