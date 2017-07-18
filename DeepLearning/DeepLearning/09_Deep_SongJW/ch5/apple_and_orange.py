@@ -103,3 +103,7 @@ if __name__ == '__main__':
     print('\t사과 가격에 대한 미분 :', dapple, '\n\t사과 개수에 대한 미분 :', dapple_num)
     print('\t귤 가격에 대한 미분 :', dorange, '\n\t귤 개수에 대한 미분 :', dorange_num)
     print('\t부가세에 대한 미분 :', dtax)
+
+'''
+순전파의 역순으로 역전파를 한다
+'''
