@@ -320,94 +320,103 @@ signals.items()   # 튜플형태로 반환한다.
 signals_items_list = list(signals.items())  # 이것도 역시 list로 사용가능
 signals_items_list
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 셋
+# 셋은 값은 버리고 키만 남은 딕셔너리와 같다. 각 키는 유니크하다. 딕셔너리와 마찬가지로 셋은 순서가 없다.
+# 셋 생성하기: set()
+empty_set = set()
+empty_set
+even_numbers = {0,2,4,6,8}
+even_numbers
+odd_numbers = {1,3,5,7,9}
+odd_numbers
+
+# 리스트, 문자열, 튜플, 딕셔너리로부터 중복된 값을 버린 셋을 생성할 수 있다.
+set('letters')
+tuple('letters')
+list('letters')
+dict('letters')   # 요건 에러
+
+set(['Dasher', 'Dancer', 'Prancer', 'Mason-Dixon'])   # set 만들기
+set({'Dasher', 'Dancer', 'Prancer', 'Mason-Dixon'})   # set 만들기
+set(('Dasher', 'Dancer', 'Prancer', 'Mason-Dixon'))   # set 만들기
+set({'Dasher':'a', 'Dancer':'b', 'Prancer':'c', 'Mason-Dixon':'d'})   # set을 만드는데 key만 가져와서 만든다.
+
+drinks = {
+    'martini': {'vodka', 'vermouth'},
+    'black russian': {'vodka', 'kahlua'},
+    'white russian': {'cream', 'kahlua', 'vodka'},
+    'manhattan': {'rye', 'vermouth', 'bitters'},
+    'screwdriver': {'orange juice', 'vodka'}
+}
+# 셋은 값들의 시퀀스일 뿐이고 딕셔너리는 키와 값의 쌍으로 이루어져 있다.
+
+# in으로 값 멤버쉽 테스트하기
+drinks.items()
+for name, contents in drinks.items():
+    if 'vodka' in contents:
+        print(name)
+for name, contents in drinks.items():
+    if 'vodka' in contents and not ('vermouth' in contents or 'cream' in contents):
+        print(name)
+
+# 콤비네이션 연산자
+# 셋 인터섹션 연산자(셋 교집합 연산자)
+for name, contents in drinks.items():
+    if contents & {'vermouth', 'orange juice'}:   # 여기서 &는 교집합을 뜻한다.
+        print(name)                               # contents와 {'vermouth', 'orange juice'}이 교집합을 가지고 있는 경우 name를 출력한다.
+
+for name, contents in drinks.items():
+    if 'vodka' in contents and not contents & {'vermouth', 'cream'}:   # vodka가 contents에 들어있고
+        print(name)                                                    # {'vermouth', 'cream'}와 교집합이 없는 것
+
+bruss = drinks['black russian']
+wruss = drinks['white russian']
+type(bruss)   # 타입은 set
+
+a = {1,2}
+b = {2,3}
+a & b   # 교집합
+a.intersection(b)   # 교집합
+
+bruss & wruss   # 밸류에 교집합이 있는가?
+
+a|b   # 합집합
+a.union(b)   # 합집합
+bruss | wruss   # 합집합
+bruss.union(wruss)   # 합집합
+
+a - b   # 차집합
+a.difference(b)   # 차집합
+bruss - wruss   # 차집합
+wruss - bruss   # 차집합
+
+a ^ b                       # 대칭차집합 : 한쪽에는 있지만 양쪽 모두에 들어있지 않은 멤버들
+a.symmetric_difference(b)   # 즉, 서로 차집합을 수행한 후에 합집합을 한 것과 같다.
+bruss ^ wruss
+
+a <= b         # 첫번째 셋이 두번째 셋의 서브셋(부분집합)인지 살펴보기
+a.issubset(b)  # 즉, 첫번째 셋이 두번째 셋에 완전히 포함되는가?
+bruss <= wruss   # bruss는 wruss를 포함한다.
+
+a < b          # 첫번째 셋이 두번째 셋의 진부분집합(즉 두번째 셋이 다 포함하고도 다른 멤버를 더 가지고 있는 셋)인가
+a < a          # 프로퍼 서브셋
+bruss < wruss
+
+a >= b          # 슈퍼셋은 서브셋의 반대, 두번째 셋을 포함하는가
+a.issuperset(b) # a가 b를 포함하는가
+a >= a          # 모든 셋은 자신의 슈퍼셋이자 서브셋이다.
+a <= a          # 모든 셋은 자신의 슈퍼셋이자 서브셋이다.
+
+a > b              # 프로퍼 수퍼셋
+wruss > wruss      # 프로퍼 수퍼셋
+a > a
+
+# 자료구조 비교하기
+marx_list = ['Groucho', 'Chico', 'Harpo']
+marx_tuple = ('Groucho', 'Chico', 'Harpo')
+marx_dict = {'Groucho': 'banjo', 'Chico':'piano', 'Harpo':'harp'}
+marx_list[2]
+marx_tuple[2]
+marx_dict['Harpo']
+
+  
