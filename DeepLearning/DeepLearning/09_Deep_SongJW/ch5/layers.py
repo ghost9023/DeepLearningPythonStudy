@@ -1,3 +1,5 @@
+import numpy as np
+
 '''
 역전파 backpropagation
 미분을 구하는 방법. 수치미분보다 빠르게 미분을 구할 수 있다.
@@ -44,6 +46,52 @@ class AddLayer:
 
     def backward(self, dout):
         return dout, dout
+
+class ReLU:
+    def __init__(self):
+        self.mask = None
+
+    def forward(self, x):
+        '''
+        ReLU 함수 순전파.
+        numpy 벡터 x 에서 0과 같거나 0보다 작은 요소를 0으로 바꿔서 출력. 
+        :param x: numpy vector
+        :return: numpy vector
+        '''
+        self.mask = (x <= 0)
+        out = x.copy()
+        out[self.mask] = 0
+
+        return out
+
+    def backward(self, dout):
+        dout[self.mask] = 0
+        dx = dout
+
+        return dx
+
+class sigmoid:
+    '''
+    sigmoid 함수의 입력을 x, 출력을 y 라 할때 연산 단계를 거슬러올라가며 미분을 역전파하면
+    입력 x 에 대한 출력 y 의 미분은 y*(1-y) 로 정리할 수 있다. 즉, 출력값만으로 미분의 계산이 가능해진다.
+    '''
+    def __init__(self):
+        self.out = None
+
+    def forward(self, x):
+        out = 1 / (1 + np.exp(-x))
+        self.out = out
+        return out
+
+    def backward(self, dout):
+        dx = dout * self.out * (1 - self.out)
+        return dx
+
+class affine:
+    '''
+    신경망의 순전파에서 행해지는 내적을 기하학에서는 어파인 변환 affine transformation 이라고 한다.
+    
+    '''
 
 if __name__ == '__main__':
     # a = apple_example()
@@ -104,6 +152,6 @@ if __name__ == '__main__':
     print('\t귤 가격에 대한 미분 :', dorange, '\n\t귤 개수에 대한 미분 :', dorange_num)
     print('\t부가세에 대한 미분 :', dtax)
 
-'''
-순전파의 역순으로 역전파를 한다
-'''
+    '''
+    순전파의 역순으로 역전파를 한다
+    '''
