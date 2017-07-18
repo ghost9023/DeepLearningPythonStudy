@@ -320,10 +320,26 @@ signals.items()   # 튜플형태로 반환한다.
 signals_items_list = list(signals.items())  # 이것도 역시 list로 사용가능
 signals_items_list
 
+# 셋
+# 셋은 값은 버리고 키만 남은 딕셔너리와 같다. 각 키는 유니크하다. 딕셔너리와 마찬가지로 셋은 순서가 없다.
+# 셋 생성하기: set()
+empty_set = set()
+empty_set
+even_numbers = {0,2,4,6,8}
+even_numbers
+odd_numbers = {1,3,5,7,9}
+odd_numbers
 
+# 리스트, 문자열, 튜플, 딕셔너리로부터 중복된 값을 버린 셋을 생성할 수 있다.
+set('letters')
+tuple('letters')
+list('letters')
+dict('letters')   # 요건 에러
 
-
-
+set(['Dasher', 'Dancer', 'Prancer', 'Mason-Dixon'])   # set 만들기
+set({'Dasher', 'Dancer', 'Prancer', 'Mason-Dixon'})   # set 만들기
+set(('Dasher', 'Dancer', 'Prancer', 'Mason-Dixon'))   # set 만들기
+set({'Dasher':'a', 'Dancer':'b', 'Prancer':'c', 'Mason-Dixon':'d'})   # set을 만드는데 key만 가져와서 만든다.
 
 
 
