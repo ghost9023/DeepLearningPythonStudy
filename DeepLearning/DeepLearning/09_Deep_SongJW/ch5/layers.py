@@ -90,8 +90,41 @@ class sigmoid:
 class affine:
     '''
     신경망의 순전파에서 행해지는 내적을 기하학에서는 어파인 변환 affine transformation 이라고 한다.
-    
     '''
+    def __init__(self, W, b):
+        '''
+        입력에 가중치를 곱하고 편향을 더하는 affine 변환 전체를 정의한 클래스이므로
+         가중치 W, 편향 b 를 포함하고, 이 값들을 갱신하기 위해 dW, db 값을 갖는다.
+         미분값을 역전파하기위해서 입력 x 를 보관한다.
+         :param W: numpy matrix : 가중치
+         :param b: numpy array : 편향
+        '''
+        self.W = W
+        self.b = b
+        self.x = None
+        self.db = None
+        self.dW = None
+
+    def forward(self, x):
+        '''
+        순전파
+        :param x: numpy matrix : 입력
+        :return: numpy matrix : 입력*가중치+편향
+        '''
+        self.x = x
+        out = np.dot(x, self.W) + self.b
+        return out
+
+    def backward(self, dout):
+        '''
+        역전파. x 에 대한 미분만 반환하고 W, b 에 대한 미분은 보관
+        :param dout: ? :역전파받은 미분값
+        :return: numpy matrix : x 에 대한 미분
+        '''
+        dx = np.dot(dout, self.W.T)
+        self.dW = np.dot(self.x.T, dout)
+        self.db = np.sum(dout, axis = 0)
+        return dx
 
 if __name__ == '__main__':
     # a = apple_example()
