@@ -15,7 +15,7 @@ def grad(x) :
 def SGD(x, lr) :
     '''
     확률적 경사 하강법
-    학습률 추천 : .4 / .9 / 1.004
+    학습률 추천 : .4 / .9 / 1.003
     :param x: np.array : 점의 위치
     :param lr: float : 학습률
     :return: np.array : 변경된 점의 위치
@@ -42,7 +42,7 @@ point = np.array([-7., 2.])
 # 학습률, 학습 횟수 설정
 small_lr = .4
 proper_lr = .9
-large_lr = 1.004
+large_lr = 1.003
 lr_tup = (large_lr, proper_lr, small_lr)
 iter_num = 30   # 학습 횟수
 
