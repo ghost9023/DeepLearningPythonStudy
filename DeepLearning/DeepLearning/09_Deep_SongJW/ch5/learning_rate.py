@@ -45,8 +45,9 @@ Z = (X **2)/20 + Y **2
 # the label
 plt.figure(figsize=(16,4))
 levels = np.arange(0, 80, 5)
-CS = plt.contour(X, Y, Z, linewidth=1, levels = levels)
+CS = plt.contour(X, Y, Z, levels = levels)
 plt.clabel(CS, inline=1, fontsize=10)
 plt.title('Simplest default with labels')
+plt.plot([5],[5],'bo')
 
 plt.show()
