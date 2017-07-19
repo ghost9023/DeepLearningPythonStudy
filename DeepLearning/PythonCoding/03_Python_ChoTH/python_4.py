@@ -122,3 +122,55 @@ while position < len(numbers):
     position += 1
 else:
     print('No even number found')
+
+
+# 순회하기: for
+# 데이터가 메모리에 맞지 않더라도 데이터 스트림을 처리할 수 있도록 허용해준다.
+rabbits = ['Flospy', 'Mopsy', 'Cottontail', 'Peter']
+current = 0
+while current < len(rabbits):
+    print(rabbits[current])
+    current += 1
+
+# 파이써닉한 우아한 방법
+for rabbit in rabbits:
+    print(rabbit)
+
+word = 'cat'
+for letter in word:
+    print(letter)   # 이런 것도 되는구나
+
+accusation = {'room':'balloom', 'weapon':'pipe', 'person':'Col. Mustard'}
+for card in accusation:
+    print(card)
+
+for value in accusation.values():
+    print(value)
+
+for item in accusation.items():
+    print(item)
+
+# 한번에 튜플 하나씩만 할당할 수 있다.
+# 튜플의 첫번째 내용(키)은 card에 두번째 내용(밸류)는 contents에 할당된다.
+for card, contents in accusation.items():
+    print('card',card, 'has the contents', contents)
+
+# 중단하기: break
+# for문의 break는 while문의 break와 똑같이 동작한다.
+
+# 건너뛰기: continue
+# for문의 continue는 while문의 continue와 똑같이 동작한다.
+
+# break 확인하기: else
+cheeses = []
+for cheese in cheeses:
+    print('This shop has some lovely', cheese)
+    break
+else:
+    print('This is not much of a cheese shop, is it?')
+# 
+
+
+
+
+
