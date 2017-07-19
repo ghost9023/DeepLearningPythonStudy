@@ -165,12 +165,142 @@ for card, contents in accusation.items():
 cheeses = []
 for cheese in cheeses:
     print('This shop has some lovely', cheese)
-    break
-else:
+    break     # break에 의해 반복문이 중단되었는지 확인하는 것
+else:         # 즉 break가 작동되지 않고 정상적으로 반복문이 모두 완료되면 else가 작동한다.
     print('This is not much of a cheese shop, is it?')
-# 
 
+# 좀 더 직관적으로 알아볼 수 있는 break, else 하드코드
+cheese = []
+found_one = False
+for cheese in cheeses:
+    found_one = True
+    print('This shop has some lovely', cheese)
+    break
+if not found_one:
+    print('This is not much of a cheese shop, is it?')
 
+# 여러시퀀스 순회하기: zip()
+days = ['Monday', 'Tuesday', 'Wednesday']
+fruits = ['banana', 'orange', 'peach']
+drinks = ['coffee', 'tea', 'beer']
+desserts = ['tiramisu', 'ice cream', 'pie', 'pudding']
+for day, fruit, drink, dessert in zip(days, fruits, drinks, desserts):
+    print(day, '/', fruit, '/', drink, '/', dessert)
+# 여러 시퀀스중 가장 짧은 시퀀스가 완료되면 zip()은 멈춘다.
 
+english = ('Monday', 'Tuesday', 'Wednesday')
+french = ('Lundi', 'Mardi', 'Mercredi')
+# 두개의 튜플을 순회 가능한 튜플로 만들기 위해 zip()을 사용한다.
+# zip()에 의해 반환되는 값은 튜플이나 리스트 자신이 아니라 하나로 반환될 수 있는 순회 가능한 값이다.
+list(zip(english, french))    # [('Monday', 'Lundi'), ('Tuesday', 'Mardi'), ('Wednesday', 'Mercredi')]
+tuple(zip(english, french))   # (('Monday', 'Lundi'), ('Tuesday', 'Mardi'), ('Wednesday', 'Mercredi'))
+dict(zip(english, french))    # {'Monday': 'Lundi', 'Tuesday': 'Mardi', 'Wednesday': 'Mercredi'}
+
+# 숫자 시퀀스 생성하기: range()
+for x in range(0,3):
+    print(x)
+list(range(0,3))
+
+for x in range(2,-1,-1):
+    print(x)
+list(range(2,-1,-1))
+
+list(range(0,11,2))
+
+# 컴프리헨션
+# 컴프리헨션이란 하나 이상의 이터레이터로부터 파이썬의 자료구조를 만드는 방법
+number_list = []
+for number in range(1,6):
+    number_list.append(number)
+number_list
+
+number_list = list(range(1,101))
+number_list = [a for a in range(1, 101)]
+number_list = [a+1 for a in range(1,101)]
+
+# [표현식 for 항목 in 순회가능한 객체 if 조건]
+a_list = []
+for number in range(1,6):
+    if number % 2 == 1:
+        a_list.append(number)
+a_list
+
+a_list = [number for number in range(1,6) if number%2 == 1]
+a_list   # 이렇게 더 콤팩트한 방법 사용가능
+
+# 이중루프 컴프리헨션
+rows = range(1,4)
+cols = range(1,3)
+for row in rows:
+    for col in cols:
+        print(row, col)
+
+rows = range(1,4)
+cols = range(1,3)
+cells = [(row, col) for row in rows for col in cols]
+for row, col in cells:
+    print(row, col)
+
+# 딕셔너리 컴프리헨션
+# {키_표현식:값_표현식 for 표현식 in 순회 가능한 객체}
+word = 'letters'
+letter_counts = {letter:word.count(letter) for letter in word}
+letter_counts
+
+# 셋 컴프리헨션
+a_set = {number for numbers in range(1,6) if number%3 == 1}
+a_set
+
+# 제너레이터 컴프리헨션
+# 튜플은 컨프리헨션이 없다. 컴프리헨션의 []를 ()로 바꿔서 사용해도 튜플 컴프리헨션이 생성되지 않는다.
+number_thing = (number for number in range(1,6))
+type(number_thing)
+
+for number in number_thing:
+    print(number)   # 이렇게 제너레이터 객체를 순회할 수 있다.
+
+number_list = list(number_thing)
+number_list   # 리스트 컴프리헨션처럼 만들기 위해 제너레이터 컴프리헨션에 list() 호출을 통해 랩핑할 수 있다.
+
+try_again = list(number_thing)
+try_again
+#####★★★★★★★만약 다시 순회하려고 한다면 아무것도 볼 수 없다.
+# 제너레이터는 한번만 실행될 수 있다. 리스트, 셋, 문자열, 딕셔너리는 메모리에 존재하지만, 제너레이터는 즉석에서 그 값을 생성하고,
+# 이터레이터를 통해서 한번에 값을 하나씩 처리한다. 제너레이터는 이 값을 기억하지 않기 때문에 다시 시작하거나 제너레이터를 백업할 수 없다.
+
+# 함수
+# 함수는 입렵 매개변수로 모든 타입을 여러개 취할 수 있다. 그리고 반환값으로 모든 타입을 여러 개 반환할 수 있다.
+
+def do_nothing():
+    pass   # 아무것도 하지 않는다는 것을 보여주기 위해 pass
+
+def make_a_sound():
+    print('quack')
+make_a_sound()
+
+def agree():
+    return True
+if agree():
+    print('Splendid')
+else:
+    print('That was unexpected')
+
+def echo(anything):
+    return anything + ' ' + anything
+echo('Rumplestiltskin')
+
+def commentary(color):
+    if color == 'red':
+        return "It's a tomato"
+    elif color == 'green':
+        return "It's a green pepper"
+    elif color == 'bee purple':
+        return "I don't know what it is, but only bees can see it"
+    else:
+        return "I've never heard of the color " + color + ","
+comment = commentary('blue')   # 매개변수가 들어가서 반환된 값이 저장된다.
+print(comment)
+
+# 만약 함수가 명시적으로 return을 호출하지 않으면 호출자는 반환값으로 return을 얻는다.
 
 
