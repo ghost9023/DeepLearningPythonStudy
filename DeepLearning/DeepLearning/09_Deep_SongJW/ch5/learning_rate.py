@@ -2,92 +2,80 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-def grad(x) :
-    '''
-    f(x,y) = (x**2)/20 + y**2 함수의 기울기를 반환하는 함수
-    :param x: np.array : 점의 위치 
-    :return: np.array : 점의 위치에서의 기울기
-    '''
-    return np.array([1/10, 2]) * x
+class Optimizer :
+
+    def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
+        self.dict_point = defaultdict(lambda: np.array(point))
+        self.dict_trace = defaultdict(lambda: {'x': [point[0]], 'y': [point[1]]})
+        self.iter_num = iter_num
+        self.lr_tup = (large_lr, proper_lr, small_lr)
+
+    def grad(self, point):
+        '''
+        f(x,y) = (x**2)/20 + y**2 함수의 기울기를 반환하는 함수
+        :param x: np.array : 점의 위치 
+        :return: np.array : 점의 위치에서의 기울기
+        '''
+        return np.array([1 / 10, 2]) * point
+
+    def method(self, point, lr):
+        pass
+
+    def optimize(self):
+        for i in range(self.iter_num):
+            for lr in self.lr_tup:
+                self.dict_point[lr] = self.method(self.dict_point[lr], lr)
+                self.dict_trace[lr]['x'].append(self.dict_point[lr][0])
+                self.dict_trace[lr]['y'].append(self.dict_point[lr][1])
 
 
-# 최적화 함수
-def SGD(x, lr) :
-    '''
-    확률적 경사 하강법
-    학습률 추천 : .4 / .9 / 1.003
-    :param x: np.array : 점의 위치
-    :param lr: float : 학습률
-    :return: np.array : 변경된 점의 위치
-    '''
-    return x-lr*grad(x)
-#
-# m_v = None
-#
-# def momentum(x, lr) :
-#     '''
-#
-#     :param x:
-#     :param lr:
-#     :return:
-#     '''
-#     global m_v
-#
-#     print(m_v)
-#     alpha = 0.9
-#     m_v = m_v if m_v is not None else np.zeros_like(x)
-#     m_v = alpha * m_v - lr * grad(x)
-#     return x + m_v
+class SGD(Optimizer):
 
-# 함수 Z = (X **2)/20 + Y **2 를 그림 - 등고선 형태
-x = np.linspace(-7.5, 7.5, 100)    # x, y 의 범위
-y = np.linspace(-3, 3, 100)
-X, Y = np.meshgrid(x, y)
-Z = (X **2)/20 + Y **2  # 그리고자 하는 함수
-plt.figure(figsize=(18,6))
-levels = np.arange(0, 40, 1)    # 등고선의 범위와 등고선간 간격
-CS = plt.contour(X, Y, Z, levels = levels)
-plt.clabel(CS, inline=1, fontsize=10)   # 등고선의 값 표시
-plt.grid()
-plt.xlim(-7,7)
-plt.ylim(-3,3)
+    def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
+        super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
 
+    def method(self, point, lr):
+        return point - lr * self.grad(point)
 
-# 초기 시작위치 설정
-point = np.array([-7., 2.])
+class Momentum(Optimizer):
 
+    def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
+        super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
+        self.dict_v = defaultdict(int)
+        self.alpha = .9
 
-# 학습률, 학습 횟수 설정
-## SGD
-small_lr = .4
-proper_lr = .9
-large_lr = 1.003
-iter_num = 50   # 학습 횟수
+    def method(self, point, lr):
+        self.dict_v[lr] *= self.alpha
+        self.dict_v[lr] -= lr * self.grad(point)
+        return point + self.dict_v[lr]
 
-# ## momentum
-# small_lr = .01
-# proper_lr = .1
-# large_lr = 0
-# iter_num = 30   # 학습 횟수
+x = np.array([-7., 2.])
 
-lr_tup = (large_lr, proper_lr, small_lr)
+sgd = SGD(point=x, iter_num=50, small_lr=.4, proper_lr=.9, large_lr=1.003)
+sgd.optimize()
 
+mmt = Momentum(point=x, iter_num=25, small_lr=.03, proper_lr=.091, large_lr=.24)
+mmt.optimize()
 
-# 점의 현재 위치와 점의 자취를 담을 딕셔너리 준비 - 시작 지점을 미리 넣어놓는다.
-dict_point = defaultdict(lambda : np.array(point))
-dict_trace = defaultdict(lambda : {'x':[point[0]], 'y':[point[1]]})
+opt_lst = [sgd, mmt]
 
-# 함수의 최소값의 위치인 (0, 0) 을 찾아가도록 경사감소법 수행
-for i in range(iter_num):
-    for lr in lr_tup:
-        dict_point[lr] = SGD(dict_point[lr], lr)
-        # dict_point[lr] = momentum(dict_point[lr], lr)
-        dict_trace[lr]['x'].append(dict_point[lr][0])
-        dict_trace[lr]['y'].append(dict_point[lr][1])
+for opt in opt_lst:
 
-print(dict_trace.keys())
-# 학습률별로 점의 이동 자취를 그림
-for i, j in zip(lr_tup,['b.-', 'rv-', 'go-']):
-    plt.plot(dict_trace[i]['x'], dict_trace[i]['y'], j,label=i)
-plt.legend()
+    # 함수 Z = (X **2)/20 + Y **2 를 그림 - 등고선 형태
+    x = np.linspace(-8, 8, 100)  # x, y 의 범위
+    y = np.linspace(-3, 3, 100)
+    X, Y = np.meshgrid(x, y)
+    Z = (X ** 2) / 20 + Y ** 2  # 그리고자 하는 함수
+    plt.figure(figsize=(8, 3))
+    levels = np.arange(0, 40, 1)  # 등고선의 범위와 등고선간 간격
+    CS = plt.contour(X, Y, Z, levels=levels)
+    plt.clabel(CS, inline=1, fontsize=10)  # 등고선의 값 표시
+    plt.grid()
+    plt.xlim(-8, 8)
+    plt.ylim(-3, 3)
+
+    for lr, format in zip(opt.lr_tup, ['.-', 'v-', 'o-']):
+        plt.plot(opt.dict_trace[lr]['x'], opt.dict_trace[lr]['y'], format, label=lr)
+        plt.title(opt.__class__.__name__+' - iteration :'+str(opt.iter_num))
+        plt.legend()
 plt.show()
