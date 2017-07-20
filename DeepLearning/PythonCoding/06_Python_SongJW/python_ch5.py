@@ -80,7 +80,7 @@ setdefault() 는 get() 과 같은 역할을 하지만 키가 누락된 경우 �
 # print(periodic_table)
 #
 # carbon = periodic_table.setdefault('Carbon', 12)    # 있다면 값을 반환하고 없다면 키와 값을 추가한 후 반환.
-# hydrogen = periodic_table.setdefault('Hydrogen', 1)
+# hydrogen = periodic_table.setdefault('Hydrogen', 5) # 키가 존재할때는 값만 반환하고 값의 수정은 없다.
 # print(carbon, hydrogen,periodic_table)  # 12 1 {'Helium': 2, 'Carbon': 12, 'Hydrogen': 1}
 
 
@@ -109,18 +109,67 @@ setdefault() 는 get() 과 같은 역할을 하지만 키가 누락된 경우 �
 # print(dict2)
 
 #### 좋은 예제
-from collections import defaultdict
-
-food_counter = defaultdict(int)
-
-for food in ['spam', 'spam', 'eggs', 'spam']:
-    food_counter[food] += 1 # 키가 없다면 바로 추가하고 연산, 키가 있다면 기존의 값에 연산
-
-for food in food_counter:
-    print(food, food_counter[food])
+# from collections import defaultdict
+#
+# food_counter = defaultdict(int)
+#
+# for food in ['spam', 'spam', 'eggs', 'spam']:
+#     food_counter[food] += 1 # 키가 없다면 바로 추가하고 연산, 키가 있다면 기존의 값에 연산
+#
+# for food in food_counter:
+#     print(food, food_counter[food])
 
 '''
 int() 는 0, list() 는 빈 리스트 [], dict() 는 빈 딕셔너리 {} 를 반환한다. 또는 람다식을 쓰자.
 defaultdict() 와 같이 인자를 주지 않는 경우 없는 키의 값은 None 으로 설정된다.'''
 
-## 5.5.2 항목세기 : counter()
+## 5.5.2 항목세기 : Counter()
+#
+# from collections import Counter
+# breakfast = ['spam', 'spam', 'eggs', 'spam']
+# breakfast_cnt = Counter(breakfast)
+# print(breakfast_cnt)
+#     # Counter({'spam': 3, 'eggs': 1})
+# print(breakfast_cnt.most_common())
+#     # [('spam', 3), ('eggs', 1)]    : 내림차순으로 튜플을 반환한다.
+# print(breakfast_cnt.most_common(1))
+#     # [('spam', 3)] : 상위 n 개가 반환된다.
+# print(breakfast_cnt.keys())
+#     # dict_keys(['eggs', 'spam'])   : 딕셔너리인가보다.
+#
+# print()
+# A1 = ['a', 'a', 'A', 'A']
+# A2 = ['a', 'A', 'A', 'A']
+# a_cnt1 = Counter(A1)
+# a_cnt2 = Counter(A2)
+# print(a_cnt1, a_cnt2)
+#     # Counter({'A': 2, 'a': 2}) Counter({'A': 3, 'a': 1})
+# print(a_cnt1 + a_cnt2)
+#     # Counter({'A': 5, 'a': 3}) : + 연산으로 두 Counter 가 하나로 합쳐진다.
+# print(a_cnt1 - a_cnt2)
+#     # Counter({'a': 1}) : - 연산도 가능하다. 단, 갯수가 음수가 되면 출력되지 않는다.
+# print(a_cnt1 & a_cnt2)
+#     # Counter({'A': 2, 'a': 1}) : 교집합. 두 집합에 모두 속한 키 중에서 값이 작은 것을 뽑는다.
+
+## 5.5.3 키 정렬하기 : OrderedDict()
+
+# from collections import OrderedDict
+#
+# dict_alpha = {'a':'A', 'b':'B', 'c':'C'}
+# for i in dict_alpha:
+#     print(i)
+#         # b c a 순으로 출력. 딕셔너리 생성시 입력 순서와 다르다.
+#
+# print()
+#
+# dict_alpha = OrderedDict([('a', 'A'), ('b', 'B'), ('c', 'C')])
+# for i in dict_alpha:
+#     print(i)
+#         # a b c 순으로 출력. 딕셔너리의 요소들이 순서를 갖게 되었다.
+
+## 5.5.4 스택 + 큐 == 데크
+'''
+데크 deque 는 스택과 큐의 기능을 모두 수행할 수 있는, 양끝에 출입구를 가진 큐.
+'''
+
+def palindrome(word):
