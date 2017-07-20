@@ -415,23 +415,118 @@ type(run_something)      # answer를 전달한다는 것은 함수를 다른 객
 
 def add_args(arg1,arg2):
     print(arg1 + arg2)
-type(add_args)
-
 def run_something_with_args(func, arg1, arg2):
-    func(arg1 + arg2)
+    func(arg1, arg2)
+run_something_with_args(add_args, 4, 9)
+# 매개변수로 함수와 숫자를 받아서 처리함 add_args(4,9)와 같음
+
+def sum_args(*args):
+    return sum(args)
+def run_with_positional_args(func, *args):
+    return func(*args)   # 인자를 튜플 하나로 받는 것이 아니라 여러개의 인자로 받아서 func에 넣어주기 위해 * 붙인다.
+run_with_positional_args(sum_args, 1,2,3,4)
+
+# 내부함수
+def outer(a,b):        # 1
+    def inner(c,d):    # 3
+        return c+d     # 4
+    return inner(a,b)  # 2
+outer(4,11)
+
+def knight(saying):
+    def inner(quote):
+        return "We are the knight who say: '%s'" % quote   # format과 같은 역할
+    return inner(saying)
+knight('Ni!')
+
+# 클로저
+# 내부함수는 클로저처럼 행동할 수 있다. 클로저는 다른 함수에 의해 동적으로 생성된다.
+# 그리고 바깥 함수로부터 생성된 변수값을 변경하고, 저장할 수 있는 함수이다.
+def knight2(saying):
+    def inner2():
+        return "We are the knight who say: '%s'" % saying   # format과 같은 역할
+    return inner2
+# 여기서 inner2가 '클로저'이다.
+# return inner2는 inner2함수의 특별한 복사본을 반환한다.
+
+a = knight2('Duck')          # 외부함수에 변수를 넣어서 inner2()를 객체화시킴
+b = knight2('Hasenpfeffer')
+type(a)
+type(b)
+a()
+b()
+a
+b
+
+# 익명함수: lambda()
+# 파이썬의 람다함수는 단일문으로 표현되는 익명함수(anonymous function)이다.
+def edit_story(words, func):   # words의 각 문자열을 func의 매개변수로 받아서 순회하면서 실행
+    for word in words:         # 하는 함수
+        print(func(word))
+stairs = ['thud', 'meow', 'thud', 'hiss']   # 재료로 쓸 문자열 시퀀스
+def enliven(word):
+    return word.capitalize() + '!'
+edit_story(stairs, enliven)
+
+# 위의 함수실행절차를 lambda로 실행
+edit_story(stairs, lambda word: word.capitalize()+'!')
+# 람다의 :콜론 이후가 람다함수의 정의부분이다.
+
+# 제너레이터
+# 제너레이터는 파이썬의 시퀀스를 생성하는 객체이다.
+# 전체 시퀀스를 한번에 메모리에 생성하고 정렬할 필요 없이 잠재적으로 아주 큰 시퀀스를 순회할 수 있다.
+# 대표적으로 range()가 있다.
+# 제너레이터를 순회할 때마다 마지막으로 호출된 항목을 기억하고 다음 값을 반환한다.
+# 제너레이터는 일반함수와 다르다. 일반함수는 이전 호출에 대한 메모리가 없고, 항상 똑같은 상태로 첫번째 라인부터 수행한다.
+# 제너레이터 함수는 return문으로 반환하지 않고 yeild문으로 값을 반환한다.
+# 제너레이터 컴프리헨션
+a = (i for i in range(10))
+for i in a:   # 제너레이터는 한번만 순회가능하다.
+    print(i)  # 즉 어떠한 형태로든 한번만 사용가능하다.
+a = (i for i in range(10))
+b = list(a)   # 리스트화도 한번만 가능하다.
+b
+c = list(a)   # 여기선 빈 리스트 생성
+c
+
+# 자주 쓰이는 제너레이터의 예는 range()
+sum(range(1,101))
+def my_range(first=0, last=10, step=1):   # 제너레이터 함수만들기
+    number = first                        # 순회가능한 시퀀스를 만든다고 보면 된다.
+    while number < last:
+        yield number
+        number += step
+for i in my_range():
+    print(i)   # 제너레이터는 순회함으로써 출력가능하다.
 
 
+# 데커레이터
+# 데커레이터는 하나의 함수를 취해서 또 다른 함수를 반환하는 함수이다.
+# *args, **kwargs
+# 내부함수
+# 함수인자
+def document_it(func):
+    def new_function(*args, **kwargs):
+        print('Running function:', func.__name__)
+        print('Positional argumants:', args)
+        print('Keyword argument:', kwargs)
+        result = func(*args, **kwargs)
+        print('Result:', result)
+        return result
+    return new_function
+# 함수이름과 인자값을 출력한다.
+# 인자로 함수를 실행한다.
+# 결과를 출력한다
+# 수정된 함수를 사용할 수 있도록 반환한다.
 
+def add_ints(a, b):
+    return a + b
+add_ints(3,5)
 
+cooler_add_ints = document_it(add_ints)   # 데커레이터를 수동으로 할당
+cooler_add_ints(3,5)
 
-
-
-
-
-
-
-
-
-
-
-
+@document_it
+def add_ints(a,b):
+    return a + b
+add_ints(3,5)
