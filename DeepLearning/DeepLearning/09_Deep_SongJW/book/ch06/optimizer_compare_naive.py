@@ -4,7 +4,7 @@ sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import OrderedDict
-from common.optimizer import *
+from book.common.optimizer import *
 
 
 def f(x, y):

@@ -41,7 +41,7 @@ class Momentum(Optimizer):
 
     def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
         super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
-        self.dict_v = defaultdict(int)
+        self.dict_v = defaultdict(lambda : np.zeros_like(point))
         self.alpha = .9
 
     def method(self, point, lr):
@@ -49,15 +49,60 @@ class Momentum(Optimizer):
         self.dict_v[lr] -= lr * self.grad(point)
         return point + self.dict_v[lr]
 
+class AdaGrad(Optimizer):
+
+    def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
+        super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
+        self.dict_h = defaultdict(lambda : np.zeros_like(point))
+        self.epsilon = 1e-8
+
+    def method(self, point, lr):
+        gradient = self.grad(point)
+        self.dict_h[lr] += gradient ** 2
+        return point - lr * (1/np.sqrt(self.dict_h[lr] + self.epsilon)) * gradient
+
+class Adam(Optimizer):
+
+    def __init__(self, point, iter_num, small_lr, proper_lr, large_lr, beta1=.9, beta2=.999):
+        super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
+        self.epsilon = 1e-8
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.m = defaultdict(lambda : np.zeros_like(point))
+        self.v = defaultdict(lambda : np.zeros_like(point))
+
+    def method(self, point, lr, iter):
+        gradient = self.grad(point)
+        beta1, beta2 = self.beta1, self.beta2
+        self.m[lr] = beta1 * self.m[lr] + (1 - beta1) * gradient
+        self.v[lr] = beta2 * self.v[lr] + (1 - beta2) * (gradient ** 2)
+        m_t = self.m[lr] / (1 - beta1 ** iter)
+        v_t = self.v[lr] / (1 - beta2 ** iter)
+        return point - (lr / np.sqrt(v_t + self.epsilon)) * m_t
+
+    def optimize(self):
+        for i in range(self.iter_num):
+            for lr in self.lr_tup:
+                self.dict_point[lr] = self.method(self.dict_point[lr], lr, i+1)
+                self.dict_trace[lr]['x'].append(self.dict_point[lr][0])
+                self.dict_trace[lr]['y'].append(self.dict_point[lr][1])
+
 x = np.array([-7., 2.])
 
-sgd = SGD(point=x, iter_num=50, small_lr=.4, proper_lr=.9, large_lr=1.003)
+sgd = SGD(point=x, iter_num=50, small_lr=.4, proper_lr=.95, large_lr=1.003)
 sgd.optimize()
 
 mmt = Momentum(point=x, iter_num=25, small_lr=.03, proper_lr=.091, large_lr=.24)
 mmt.optimize()
 
-opt_lst = [sgd, mmt]
+adg = AdaGrad(point=x, iter_num=30, small_lr=.5, proper_lr=1, large_lr=1.5)
+adg.optimize()
+
+# ad = Adam(point=x, iter_num=50, small_lr=.1, proper_lr=.2, large_lr=.4)
+ad = Adam(point=x, iter_num=30, small_lr=.2, proper_lr=.3, large_lr=.35)
+ad.optimize()
+
+opt_lst = [sgd, mmt, adg, ad]
 
 for opt in opt_lst:
 
@@ -75,7 +120,7 @@ for opt in opt_lst:
     plt.ylim(-3, 3)
 
     for lr, format in zip(opt.lr_tup, ['.-', 'v-', 'o-']):
-        plt.plot(opt.dict_trace[lr]['x'], opt.dict_trace[lr]['y'], format, label=lr)
+        plt.plot(opt.dict_trace[lr]['x'], opt.dict_trace[lr]['y'], format,ms=5 ,label=lr)
         plt.title(opt.__class__.__name__+' - iteration :'+str(opt.iter_num))
-        plt.legend()
+        plt.legend(title='learning rate')
 plt.show()
