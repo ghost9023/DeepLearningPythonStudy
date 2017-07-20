@@ -4,9 +4,9 @@ import sys
 sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
 import matplotlib.pyplot as plt
 from dataset.mnist import load_mnist
-from common.util import smooth_curve
-from common.multi_layer_net import MultiLayerNet
-from common.optimizer import *
+from book.common.util import smooth_curve
+from book.common.multi_layer_net import MultiLayerNet
+from book.common.optimizer import *
 
 
 # 0. MNIST 데이터 읽기==========

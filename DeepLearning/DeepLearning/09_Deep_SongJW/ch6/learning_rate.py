@@ -104,14 +104,14 @@ ad.optimize()
 
 opt_lst = [sgd, mmt, adg, ad]
 
-for opt in opt_lst:
-
+plt.figure(figsize=(16, 6))
+for opt, i in zip(opt_lst, range(1,5)):
+    plt.subplot(2, 2, i)
     # 함수 Z = (X **2)/20 + Y **2 를 그림 - 등고선 형태
     x = np.linspace(-8, 8, 100)  # x, y 의 범위
     y = np.linspace(-3, 3, 100)
     X, Y = np.meshgrid(x, y)
     Z = (X ** 2) / 20 + Y ** 2  # 그리고자 하는 함수
-    plt.figure(figsize=(8, 3))
     levels = np.arange(0, 40, 1)  # 등고선의 범위와 등고선간 간격
     CS = plt.contour(X, Y, Z, levels=levels)
     plt.clabel(CS, inline=1, fontsize=10)  # 등고선의 값 표시
