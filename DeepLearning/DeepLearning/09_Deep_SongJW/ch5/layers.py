@@ -1,4 +1,5 @@
 import numpy as np
+from book.common.functions import softmax, cross_entropy_error
 
 '''
 역전파 backpropagation
@@ -70,7 +71,7 @@ class ReLU:
 
         return dx
 
-class sigmoid:
+class Sigmoid:
     '''
     sigmoid 함수의 입력을 x, 출력을 y 라 할때 연산 단계를 거슬러올라가며 미분을 역전파하면
     입력 x 에 대한 출력 y 의 미분은 y*(1-y) 로 정리할 수 있다. 즉, 출력값만으로 미분의 계산이 가능해진다.
@@ -87,7 +88,7 @@ class sigmoid:
         dx = dout * self.out * (1 - self.out)
         return dx
 
-class affine:
+class Affine:
     '''
     신경망의 순전파에서 행해지는 내적을 기하학에서는 어파인 변환 affine transformation 이라고 한다.
     '''
@@ -126,64 +127,96 @@ class affine:
         self.db = np.sum(dout, axis = 0)
         return dx
 
+class SoftmaxWithLoss:
+    '''
+    softmax 함수와 cross entropy error 를 결합한 레이어
+    '''
+    def __init__(self):
+        self.loss = None
+        self.y = None
+        self.t = None
+
+    def forward(self, x, t):
+        '''
+        순전파
+        :param x: numpy matrix : 입력 
+        :param t: numpy matrix : 레이블
+        :return: float : loss
+        '''
+        self.t = t
+        self.y = softmax(x)
+        self.loss = cross_entropy_error(self.y, self.t)
+        return self.loss
+
+    def backward(self, dout = 1):
+        '''
+        역전파. 역전파시에는 미분값을 배치 크기로 나눠서 데이터 한개당 오차를 전달한다.
+        :param dout: float : default 1
+        :return: numpy matrix : 입력에 대한 미분 
+        '''
+        batch_size = self.t.shape[0]
+        dx = (self.y -self.t) / batch_size
+        return dx
+
+
 if __name__ == '__main__':
-    # a = apple_example()
-    # print(a.forward_prop())
-    # a.backward_prop()
-
-    # 예제 : 개당 100원 사과 2개를 사는데 세금은 10 % 가 붙는다면 최종 가격은?
-
-    print('예제 : 개당 100원 사과 2개를 사는데 세금은 10 % 가 붙는다면 최종 가격은?')
-        # 순전파
-    apple = 100
-    apple_num = 2
-    tax = 1.1
-
-    mul_apple_layer = MulLayer()
-    mul_tax_layer = MulLayer()
-
-    apple_price = mul_apple_layer.forward(apple, apple_num)
-    price = mul_tax_layer.forward(apple_price, tax)
-
-    print('\t100원 사과 2개의 가격 (세금 10%) :',price)    # 각 레이어를 통과하며 값을 전달하여 최종 가격을 출력한다.
-
-        # 역전파
-    dprice = 1
-    dapple_price, dtax = mul_tax_layer.backward(dprice)
-    dapple, dapple_num = mul_apple_layer.backward(dapple_price)
-
-    print('\t사과 가격에 대한 미분 :',dapple,'\n\t사과 개수에 대한 미분 :',dapple_num,'\n\t부가세에 대한 미분 :',dtax)
-
-    # 예제 : 100원 사과 2개, 150원 귤 3개를 사는데 세금이 10 % 붙는다면 최종 가격은?
-
-    print('\n예제 : 100원 사과 2개, 150원 귤 3개를 사는데 세금이 10 % 붙는다면 최종 가격은?')
-    apple = 100
-    orange = 150
-    apple_num = 2
-    orange_num = 3
-    tax = 1.1
-
-    mul_apple_layer = MulLayer()
-    mul_orange_layer = MulLayer()
-    add_apple_orange_layer = AddLayer()
-    mul_tax_layer = MulLayer()
-
-    # 순전파
-    apple_price = mul_apple_layer.forward(apple, apple_num)
-    orange_price = mul_orange_layer.forward(orange, orange_num)
-    all_price = add_apple_orange_layer.forward(apple_price, orange_price)
-    price = mul_tax_layer.forward(all_price, tax)
-    print('\t100원 사과 2개, 150원 오렌지 2개를 사는데 세금 10 % 가 붙는다면 최종 가격은? :', price)
-
-    # 역전파
-    dprice = 1
-    dall_price, dtax = mul_tax_layer.backward(dprice)
-    dapple_price, dorange_price = add_apple_orange_layer.backward(dall_price)
-    dapple, dapple_num = mul_apple_layer.backward(dapple_price)
-    dorange, dorange_num = mul_orange_layer.backward(dorange_price)
-    print('\t사과 가격에 대한 미분 :', dapple, '\n\t사과 개수에 대한 미분 :', dapple_num)
-    print('\t귤 가격에 대한 미분 :', dorange, '\n\t귤 개수에 대한 미분 :', dorange_num)
-    print('\t부가세에 대한 미분 :', dtax)
+    # # a = apple_example()
+    # # print(a.forward_prop())
+    # # a.backward_prop()
+    #
+    # # 예제 : 개당 100원 사과 2개를 사는데 세금은 10 % 가 붙는다면 최종 가격은?
+    #
+    # print('예제 : 개당 100원 사과 2개를 사는데 세금은 10 % 가 붙는다면 최종 가격은?')
+    #     # 순전파
+    # apple = 100
+    # apple_num = 2
+    # tax = 1.1
+    #
+    # mul_apple_layer = MulLayer()
+    # mul_tax_layer = MulLayer()
+    #
+    # apple_price = mul_apple_layer.forward(apple, apple_num)
+    # price = mul_tax_layer.forward(apple_price, tax)
+    #
+    # print('\t100원 사과 2개의 가격 (세금 10%) :',price)    # 각 레이어를 통과하며 값을 전달하여 최종 가격을 출력한다.
+    #
+    #     # 역전파
+    # dprice = 1
+    # dapple_price, dtax = mul_tax_layer.backward(dprice)
+    # dapple, dapple_num = mul_apple_layer.backward(dapple_price)
+    #
+    # print('\t사과 가격에 대한 미분 :',dapple,'\n\t사과 개수에 대한 미분 :',dapple_num,'\n\t부가세에 대한 미분 :',dtax)
+    #
+    # # 예제 : 100원 사과 2개, 150원 귤 3개를 사는데 세금이 10 % 붙는다면 최종 가격은?
+    #
+    # print('\n예제 : 100원 사과 2개, 150원 귤 3개를 사는데 세금이 10 % 붙는다면 최종 가격은?')
+    # apple = 100
+    # orange = 150
+    # apple_num = 2
+    # orange_num = 3
+    # tax = 1.1
+    #
+    # mul_apple_layer = MulLayer()
+    # mul_orange_layer = MulLayer()
+    # add_apple_orange_layer = AddLayer()
+    # mul_tax_layer = MulLayer()
+    #
+    # # 순전파
+    # apple_price = mul_apple_layer.forward(apple, apple_num)
+    # orange_price = mul_orange_layer.forward(orange, orange_num)
+    # all_price = add_apple_orange_layer.forward(apple_price, orange_price)
+    # price = mul_tax_layer.forward(all_price, tax)
+    # print('\t100원 사과 2개, 150원 오렌지 2개를 사는데 세금 10 % 가 붙는다면 최종 가격은? :', price)
+    #
+    # # 역전파
+    # dprice = 1
+    # dall_price, dtax = mul_tax_layer.backward(dprice)
+    # dapple_price, dorange_price = add_apple_orange_layer.backward(dall_price)
+    # dapple, dapple_num = mul_apple_layer.backward(dapple_price)
+    # dorange, dorange_num = mul_orange_layer.backward(dorange_price)
+    # print('\t사과 가격에 대한 미분 :', dapple, '\n\t사과 개수에 대한 미분 :', dapple_num)
+    # print('\t귤 가격에 대한 미분 :', dorange, '\n\t귤 개수에 대한 미분 :', dorange_num)
+    # print('\t부가세에 대한 미분 :', dtax)
 
     '''
     순전파의 역순으로 역전파를 한다
