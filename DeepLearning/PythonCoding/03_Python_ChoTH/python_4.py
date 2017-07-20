@@ -334,6 +334,104 @@ is_none([])
 is_none({})
 is_none(set())
 
+# 위치인자
+def menu(wine, entree, dessert):
+    return {'wine':wine, 'entree':entree, 'dessert':dessert}
+menu('chardonnay', 'chicken', 'cake')
+
+# 키워드인자
+# 이와같이 매개변수에 상응하는 이름을 인자에 지정할 수 있다.
+menu(entree='beef', dessert='bagel', wine='fish')   # 이렇게 순서가 달라도 지정가능하다.
+menu('frontenac', dessert='flan', entree='fish')    # 이렇게 위치인자와 키워드인자를 섞어서 쓸 수 있다.
+
+# 기본 매개변수값 지정하기
+def menu(wine, entree, dessert='pudding'):
+    return {'wine':wine, 'entree':entree, 'dessert':dessert}
+menu('chardonnay', 'chicken')
+menu('dunkelfelder', 'dunk', 'doughnut')
+
+def buggy(arg, result=[]):   # 여기서 먼저 빈 리스트를 지정해준다.
+    result.append(arg)
+    print(result)
+buggy('a')
+buggy('b')
+
+def works(arg):              # 위의 함수와 같은 함수
+    result = []
+    result.append(arg)
+    return result
+works('a')
+works('b')
+
+def nonbuggy(arg, result=None):
+    if result is None:
+        result = []
+    result.append(arg)
+    print(result)
+nonbuggy('a')
+nonbuggy('b')
+
+# 위치인자 모으기: * (애스터리스크)
+# 함수의 매개변수에 애스터리스크를 사용할 때 애스터리스크는 매개변수에서 위치인자 변수들을 튜플로 묶는다.
+def print_args(*args):
+    print('Positional argument tuple:', args)
+print_args()                          # 함수를 인자없이 호출하면 &args에는 아무것도 없다.
+print_args(3,2,1,'wait!','uh...')     # 매개변수를 묶어서 튜플로 반환한다.
+
+def print_more(required1, required2, *args):
+    print('Need this one:', required1)
+    print('Need this one too:', required2)
+    print('All the rest:', args)
+print_more('cap','gloves','scarf','monocle','mustache wax')
+
+# 키워드 인자 모으기
+def print_kwargs(**kwargs):
+    print('Keyword arguments:', kwargs)
+print_kwargs(wine='merlot', entree='mutton', dessert='macaroon')
+
+# docstring
+def print_echo(anything):
+    'echo return sits input argment'
+    return anything
+
+def print_if_true(thing, check):
+    '''
+    :param thing: 이거는 이거 
+    :param check: 저거는 저거
+    :return: 그래서 이거
+    '''
+    pass
+help(print_if_true)
+print(print_if_true.__doc__)
+
+# 일등시민: 함수
+# 함수는 변수에 할당할 수 있고, 다른함수에서 이를 인자로 쓸 수 있으며 함수에서 이를 반환할 수도 있다.
+def answer():
+    print(42)
+def run_something(func):
+    func()
+run_something(answer)    # 함수의 매개변수로 함수를 받아서 실행시킬 수 있다.
+type(run_something)      # answer를 전달한다는 것은 함수를 다른 객체와 같이 간주한다는 뜻이다.
+
+def add_args(arg1,arg2):
+    print(arg1 + arg2)
+type(add_args)
+
+def run_something_with_args(func, arg1, arg2):
+    func(arg1 + arg2)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
