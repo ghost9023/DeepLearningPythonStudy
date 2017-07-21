@@ -547,15 +547,20 @@ add_ints(3, 5)
 # 네임스페이스는 특정 이름이 유일하고 다른 네임스페이스에서의 같은 이름과 관계가 없는것을 말한다.
 # 메인 프로그램에서 x라는 변수를 정의하고, 함수에서 x라는 변수를 정의했을 때 이들은 서로 다른 것을 참조한다.
 # 하지만 다양한 방법으로 이 경계를 넘을 수 있다.
-# 메인프로그램은 전역 변수의 값을 얻을 수 있다.
-animal = 'fruitbat'
+# 메인프로그램은 전역 변수의 값을 얻을 수 있다. (global variable)
+animal = 'fruitbat'   # 전역변수
 def print_global():
     print('at the top level:', animal)
-print_global()
+print('at the top level:', animal)
+print_global()    # 함수로부터 전역변수의 값을 얻을 수 있다. animal = 'fruitbat'을 받아서 사용한다.
+
+def change_and_print_global():    # 함수에서 전역변수의 값을 바꾸려고 하면 에러가 발생한다.
+    print('inside change_and_print_global:', animal)    # 여기서 우선 사용을 해주면서 전역변수를 끌어오고
+    animal = 'wombat'                                   # 여기서 수정해준다.
+    print('after the change:', animal)                  # 수정한 값을 다시 사용
+change_and_print_global()     # 에러 발생, 즉 함수내에서는 전역변수의 값을 사용할 수는 있으되 갱신은 하지 못한다.
 
 def change_and_print_global():
-    print('inside change_and_print_global:', animal)
-    animal = 'wombat'
+    animal = 'wombat'                                   # 아까와 다르게 전역변수를 끌어오지 않고 여기서 만들어준다.
     print('after the change:', animal)
-change_and_print_global()
 
