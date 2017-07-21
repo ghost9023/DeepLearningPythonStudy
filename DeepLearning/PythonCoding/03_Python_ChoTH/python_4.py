@@ -564,3 +564,53 @@ def change_and_print_global():
     animal = 'wombat'                                   # 아까와 다르게 전역변수를 끌어오지 않고 여기서 만들어준다.
     print('after the change:', animal)
 
+# 이름에 _와 __사용
+# 이름 맨 앞에
+def amazing():
+    '''This is the amaizing function.
+    Want to see it again?'''
+    print('This function is names:', amazing.__name__)   # 여기에 함수 이름 저장된다.
+    print('And its docstring is:', amazing.__doc__)      # 여기에 함수 docstring 저장된다.
+amazing()
+
+# 에러 처리하기
+# 어떤 상황에서 실패할 수 있는 코드를 실행했을 때는 모든 잠재적인 에러를 방지하기 위해 적절한 예외처리가 필요하다.
+short_list = [1,2,3]
+position = 5
+short_list[position]   # 예외발생@@@@!!@!!!
+
+short_list = [1,2,3]
+position = 5
+try:
+    short_list[position]
+except:   # 예외발생시 아래 명령문 실행
+    print('Need a position between 0 and', len(short_list)-1, 'but got', position)
+
+short_list = [1,2,3]
+while True:
+    value = input('Position [q to quit]?')
+    if value == 'q':
+        break
+    try:
+        position = int(value)
+        print(short_list[position])
+    except IndexError as err:     # 인덱스 에러나면 아래 명령문 실행
+        print('Bad index:', position)
+    except Exception as other:    # 나머지 모든 예외는 아래 명령문 실행
+        print('Something else broke:', other)
+
+# 예외만들기
+# 예외를 정의할 수 있다.
+# 새로운 예외 타입을 정의하려면 클래스 객체타입을 정의해야한다.
+class UppercaseException(Exception):
+    pass
+words = ['eeenie', 'meenie', 'miny', 'MO']
+for word in words:
+    if word.isupper():     # 대문자 발견하면
+        raise UppercaseException(word)   # 아래 예외 실행
+
+try:
+    raise OopsException('panic')   # OopsException을 발생시켜라
+except OopsException as exc:       # OopsException 예외가 발생했으므로 아래 명령어를 실행해라
+    print(exc)                     # exc는 OopsException 발생했으므로 'panic'(예외클래스에 미리 할당 가능)을 출력한다.
+
