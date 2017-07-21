@@ -6,9 +6,9 @@ sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.mnist import load_mnist
-from common.util import smooth_curve
-from common.multi_layer_net import MultiLayerNet
-from common.optimizer import SGD
+from book.common.util import smooth_curve
+from book.common.multi_layer_net import MultiLayerNet
+from book.common.optimizer import SGD
 
 
 # 0. MNIST 데이터 읽기==========
@@ -27,7 +27,7 @@ networks = {}
 train_loss = {}
 for key, weight_type in weight_init_types.items():
     networks[key] = MultiLayerNet(input_size=784, hidden_size_list=[100, 100, 100, 100],
-                                  output_size=10, weight_init_std=weight_type)
+                                  output_size=10, weight_init_std=weight_type, activation='relu')
     train_loss[key] = []
 
 
