@@ -530,3 +530,32 @@ cooler_add_ints(3,5)
 def add_ints(a,b):
     return a + b
 add_ints(3,5)
+
+def square_it(func):
+    def new_function(*args, **kwargs):
+        result = func(*args, **kwargs)
+        return result*result
+    return new_function
+
+@document_it
+@square_it    # 이렇게 데코레이터를 두개 사용할 수도 있다.
+def add_ints(a, b):
+    return a + b
+add_ints(3, 5)
+
+# 네임스페이스와 스코프
+# 네임스페이스는 특정 이름이 유일하고 다른 네임스페이스에서의 같은 이름과 관계가 없는것을 말한다.
+# 메인 프로그램에서 x라는 변수를 정의하고, 함수에서 x라는 변수를 정의했을 때 이들은 서로 다른 것을 참조한다.
+# 하지만 다양한 방법으로 이 경계를 넘을 수 있다.
+# 메인프로그램은 전역 변수의 값을 얻을 수 있다.
+animal = 'fruitbat'
+def print_global():
+    print('at the top level:', animal)
+print_global()
+
+def change_and_print_global():
+    print('inside change_and_print_global:', animal)
+    animal = 'wombat'
+    print('after the change:', animal)
+change_and_print_global()
+
