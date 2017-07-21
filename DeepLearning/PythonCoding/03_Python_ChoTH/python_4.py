@@ -530,3 +530,87 @@ cooler_add_ints(3,5)
 def add_ints(a,b):
     return a + b
 add_ints(3,5)
+
+def square_it(func):
+    def new_function(*args, **kwargs):
+        result = func(*args, **kwargs)
+        return result*result
+    return new_function
+
+@document_it
+@square_it    # 이렇게 데코레이터를 두개 사용할 수도 있다.
+def add_ints(a, b):
+    return a + b
+add_ints(3, 5)
+
+# 네임스페이스와 스코프
+# 네임스페이스는 특정 이름이 유일하고 다른 네임스페이스에서의 같은 이름과 관계가 없는것을 말한다.
+# 메인 프로그램에서 x라는 변수를 정의하고, 함수에서 x라는 변수를 정의했을 때 이들은 서로 다른 것을 참조한다.
+# 하지만 다양한 방법으로 이 경계를 넘을 수 있다.
+# 메인프로그램은 전역 변수의 값을 얻을 수 있다. (global variable)
+animal = 'fruitbat'   # 전역변수
+def print_global():
+    print('at the top level:', animal)
+print('at the top level:', animal)
+print_global()    # 함수로부터 전역변수의 값을 얻을 수 있다. animal = 'fruitbat'을 받아서 사용한다.
+
+def change_and_print_global():    # 함수에서 전역변수의 값을 바꾸려고 하면 에러가 발생한다.
+    print('inside change_and_print_global:', animal)    # 여기서 우선 사용을 해주면서 전역변수를 끌어오고
+    animal = 'wombat'                                   # 여기서 수정해준다.
+    print('after the change:', animal)                  # 수정한 값을 다시 사용
+change_and_print_global()     # 에러 발생, 즉 함수내에서는 전역변수의 값을 사용할 수는 있으되 갱신은 하지 못한다.
+
+def change_and_print_global():
+    animal = 'wombat'                                   # 아까와 다르게 전역변수를 끌어오지 않고 여기서 만들어준다.
+    print('after the change:', animal)
+
+# 이름에 _와 __사용
+# 이름 맨 앞에
+def amazing():
+    '''This is the amaizing function.
+    Want to see it again?'''
+    print('This function is names:', amazing.__name__)   # 여기에 함수 이름 저장된다.
+    print('And its docstring is:', amazing.__doc__)      # 여기에 함수 docstring 저장된다.
+amazing()
+
+# 에러 처리하기
+# 어떤 상황에서 실패할 수 있는 코드를 실행했을 때는 모든 잠재적인 에러를 방지하기 위해 적절한 예외처리가 필요하다.
+short_list = [1,2,3]
+position = 5
+short_list[position]   # 예외발생@@@@!!@!!!
+
+short_list = [1,2,3]
+position = 5
+try:
+    short_list[position]
+except:   # 예외발생시 아래 명령문 실행
+    print('Need a position between 0 and', len(short_list)-1, 'but got', position)
+
+short_list = [1,2,3]
+while True:
+    value = input('Position [q to quit]?')
+    if value == 'q':
+        break
+    try:
+        position = int(value)
+        print(short_list[position])
+    except IndexError as err:     # 인덱스 에러나면 아래 명령문 실행
+        print('Bad index:', position)
+    except Exception as other:    # 나머지 모든 예외는 아래 명령문 실행
+        print('Something else broke:', other)
+
+# 예외만들기
+# 예외를 정의할 수 있다.
+# 새로운 예외 타입을 정의하려면 클래스 객체타입을 정의해야한다.
+class UppercaseException(Exception):
+    pass
+words = ['eeenie', 'meenie', 'miny', 'MO']
+for word in words:
+    if word.isupper():     # 대문자 발견하면
+        raise UppercaseException(word)   # 아래 예외 실행
+
+try:
+    raise OopsException('panic')   # OopsException을 발생시켜라
+except OopsException as exc:       # OopsException 예외가 발생했으므로 아래 명령어를 실행해라
+    print(exc)                     # exc는 OopsException 발생했으므로 'panic'(예외클래스에 미리 할당 가능)을 출력한다.
+
