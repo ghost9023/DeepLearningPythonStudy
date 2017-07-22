@@ -5,8 +5,8 @@ sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.mnist import load_mnist
-from common.multi_layer_net_extend import MultiLayerNetExtend
-from common.trainer import Trainer
+from book.common.multi_layer_net_extend import MultiLayerNetExtend
+from book.common.trainer import Trainer
 
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True)
 
