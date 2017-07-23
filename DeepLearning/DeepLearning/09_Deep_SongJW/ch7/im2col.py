@@ -27,6 +27,9 @@ def im2col(x, fh, fw, stride=1, pad=0):
 
 b = im2col(y, 2, 2, 1, 0)
 print(b.shape)
-filt = np.arange(36).reshape(3,3,2,2).reshape(-1,12).T
-print(filt.shape)
-print(np.dot(b, filt).T.reshape(3,3,2,2))
+
+w = np.ones(36).reshape(3,3,2,2).reshape(3,-1).T
+print(w)
+
+print()
+print(np.dot(b, w).reshape(3,3,2,2))

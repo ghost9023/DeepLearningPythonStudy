@@ -1,11 +1,6 @@
 import numpy as np
 
-def numerical_diff(f, x):
-    h = 1e-4
-    return (f(x+h) - f(x-h)) / (2*h)
-
-def func(x) :
-    y = .01 * x ** 2 + .1 * x
-    return y
-
-print(numerical_diff(func, 10))
+a = np.arange(60).reshape(5, 12).T
+print(a)
+b = a.reshape(3,2,2,-1).transpose(0,3,1,2)
+print(b)

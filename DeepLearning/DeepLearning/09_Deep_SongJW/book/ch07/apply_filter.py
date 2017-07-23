@@ -3,9 +3,9 @@ import sys, os
 sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
 import numpy as np
 import matplotlib.pyplot as plt
-from simple_convnet import SimpleConvNet
+from book.ch07.simple_convnet import SimpleConvNet
 from matplotlib.image import imread
-from common.layers import Convolution
+from book.common.layers import Convolution
 
 def filter_show(filters, nx=4, show_num=16):
     """
