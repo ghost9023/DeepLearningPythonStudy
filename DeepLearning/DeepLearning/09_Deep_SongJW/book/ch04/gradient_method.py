@@ -1,20 +1,22 @@
 # coding: utf-8
 import numpy as np
 import matplotlib.pylab as plt
-from gradient_2d import numerical_gradient
+from book.ch04.gradient_2d import numerical_gradient
 
 
 def gradient_descent(f, init_x, lr=0.01, step_num=100):
     x = init_x
-    x_history = []
+    # x_history = []
 
     for i in range(step_num):
-        x_history.append( x.copy() )
+        # x_history.append( x.copy() )
 
         grad = numerical_gradient(f, x)
         x -= lr * grad
+        print(i, x)
 
-    return x, np.array(x_history)
+    # return x, np.array(x_history)
+    return x
 
 
 def function_2(x):
@@ -22,8 +24,8 @@ def function_2(x):
 
 init_x = np.array([-3.0, 4.0])    
 
-lr = 0.1
-step_num = 20
+lr = 1e-10
+step_num = 100000000
 x, x_history = gradient_descent(function_2, init_x, lr=lr, step_num=step_num)
 
 plt.plot( [-5, 5], [0,0], '--b')
