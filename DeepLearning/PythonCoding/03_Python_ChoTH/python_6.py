@@ -199,14 +199,53 @@ c.diameter
 # 이것은 읽기전용 속성이다.
 c.diameter = 20   # 에러발생
 # AibuteError: can't set attribute
+
+
 # private 네임 맹글링
+# 파이썬은 클래스 정의 외부에서 볼 수 없도록 하는 속성에 대한 네이밍 컨센션이 있다.
+# 속성 앞에 두 언더스코어(__)를 붙이면 된다.
+class Duck():
+    def __init__(self, input_name):
+        self.__name = input_name
+    @property
+    def name(self):
+        print('inside the getter')
+        return self.__name
+    @name.setter
+    def name(self, input_name):
+        print('inside the setter')
+        self.__name = input_name
 
+fowl = Duck('Howard')
+fowl.name
+fowl.name = 'Donald'
+fowl.name
+# 아무 문제가 없다. 그러나 __name 속성을 바로 접근할 수 없다.
+fowl.__name
+# AttributeError: 'Duck' object has no attribute '__name'
+# 이 네이밍 컨벤션은 속성을 private로 만들지는 않지만 파이썬은 이 속성이 우연히
+# 외부코드에서 발견할 수 없도록 이름을 맹글링mangling 해놓았다.
+fowl._Duck__name
+# 'inside the setter'를 출력하지 않았다. 비록 이것이 속성을 완벽하게 보호할 수는 없지만,
+# 네임 맹글링은 속성의 의도적인 직접 접근을 어렵게 만든다.
 
-
-
-
-
-
+# 메서드 타입
+# 어떤 데이터(속성)와 함수(메서드)는 클래스 자신의 일부이고, 어떤 것은 클래스로부터 생성된 객체의 일부이다.
+# 클래스 정의에서 메서드의 첫번째 인자가 self라면 이 메서드는 인스턴스 메서드이다.
+# 이것은 일반적인 클래스를 생성할 때의 메서드 타입이다.
+# 인스턴스 매서드의 첫번때 매개변수는 self이고, 파이썬은 이 메서드를 호출할 때 객체를 전달한다.
+# 이와 반대로 클래스 메서드는 클래스 전체에 영향을 미친다. 클래스에 대한 어떤 변화는 모든 객체에 영향을 미친다.
+# 클래스 정의에서 함수에 @classmethod 데커레이터가 있다면 이 것은 클래스 메서드이다.
+# 또한 이 메서드의 첫번째 매개변수는 클래스 자신이다. 파이썬에서는 보통 이 클래스의 매개변수를 cls로 쓴다.
+class A():
+    cnt = 0
+    def __init(self):
+        A.cnt += 1
+    def exclaim(self):
+        print("I'm an A!")
+    @classmethod
+    def kids(cls):
+        print("A has", cls.cnt, "little objects.")
 
 
 
