@@ -2,8 +2,8 @@
 import sys, os
 sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
 import numpy as np
-from common.functions import softmax, cross_entropy_error
-from common.gradient import numerical_gradient
+from book.common.functions import softmax, cross_entropy_error
+from book.common.gradient import numerical_gradient
 
 
 class simpleNet:
@@ -29,3 +29,4 @@ f = lambda w: net.loss(x, t)
 dW = numerical_gradient(f, net.W)
 
 print(dW)
+print(net.loss(x, t))
