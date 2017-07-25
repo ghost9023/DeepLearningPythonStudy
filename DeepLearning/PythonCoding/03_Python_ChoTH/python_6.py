@@ -239,13 +239,28 @@ fowl._Duck__name
 # 또한 이 메서드의 첫번째 매개변수는 클래스 자신이다. 파이썬에서는 보통 이 클래스의 매개변수를 cls로 쓴다.
 class A():
     cnt = 0
-    def __init(self):
+    def __init__(self):
         A.cnt += 1
     def exclaim(self):
         print("I'm an A!")
     @classmethod
     def kids(cls):
-        print("A has", cls.cnt, "little objects.")
+        print("A has", cls.cnt, "little objects.")   # cls는 A()클래스를 말한다. A.cnt도 사용가능
+
+easy_a = A()
+breezy_a = A()
+wheezy_a = A()
+A.kids()
+# 객체화를 하면서 클래스변수인 A.cnt가 변화하였고 변화된 사항은 클래스메서드를 통해 실행된다.
+# 즉 클래스 메서드는 클래스 외부에서 공유가능하다는 뜻이다.
+
+
+
+
+
+
+
+
 
 
 
