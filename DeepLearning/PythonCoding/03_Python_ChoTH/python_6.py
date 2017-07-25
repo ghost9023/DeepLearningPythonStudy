@@ -254,15 +254,156 @@ A.kids()
 # 객체화를 하면서 클래스변수인 A.cnt가 변화하였고 변화된 사항은 클래스메서드를 통해 실행된다.
 # 즉 클래스 메서드는 클래스 외부에서 공유가능하다는 뜻이다.
 
+# 정적메서드
+# 정적메서드는 @staticmethod 데커레이터가 붙어있고 첫번째 매개변수로 self나 cls가 없다.
+class CoyoteWeapon():
+    @staticmethod
+    def commercial():
+        print('This CoyoteWeapon has been brought to you by Acme')
+CoyoteWeapon.commercial()
+# 이 메서드에 접근하기 위해 CoyoteWeapon클래스에서 객체를 생성할 필요가 없다.
 
+# 덕타이핑
+# 파이썬은 다형성을 느슨하게 구현했다. 이것은 클래스에 상관없이 같은 동작을 다른 객체에 적용할 수 있다는 것을 의미한다.
+class Quote():
+    def __init__(self, person, words):
+        self.person = person
+        self.words = words
+    def who(self):
+        return self.person
+    def says(self):
+        return self.words + '.'
 
+class QuestionQuote(Quote):
+    def says(self):
+        return self.words + '?'
 
+class ExclaimationQuote(Quote):
+    def says(self):
+        return self.words + '!'
+# QuestionQuote(), ExclaimationQuote() 클래스에서 초기화 함수를 쓰지 않았다. 그러므로 __init__() 메서드를 오버라이드 하지 않았다.
+# 파이썬은 자동으로 부모클래스 Quote 의  __init__() 메서드를 호출해서 인스턴스 변수 person과 words를 저장한다.
 
+hunter = Quote('Elmer Fudd', "I'm hunting wabbits")
+print(hunter.who(), 'says:', hunter.says())
+hunter1 = QuestionQuote('Bugs Bunny', "What's up, doc")
+print(hunter1.who(), 'says:', hunter1.says())   # who()는 가져다 쓰고 says()는 자기거 쓴다.
+hunter2 = ExclaimationQuote('Daffy Duck', "It's a rabbit season")
+print(hunter2.who(), 'says:', hunter2.says())   # who()는 가져다 쓰고 says()는 자기거 쓴다.
+# 세개의 서로다른 says() 메서드는 세 클래스에 대해 서로 다른 동작을 제공한다. 이것은 객체지향 언어에서 전통적인 다형성의 특징이다.
+# 그러니까 이름이 모두 says()라도 서로 다른 클래스에 따라 서로 다른 동작을 제공한다는거다
+class BabblingBrook():
+    def who(self):
+        return 'Brook'
+    def says(self):
+        return 'Babble'
+brook = BabblingBrook()
 
+def who_says(obj):
+    print(obj.who(), 'says', obj.says())
 
+who_says(hunter)   # 같은 함수내에서 같은 이름의 메서드를 사용하지만
+who_says(hunter1)  # 동작하는 받아오는 객체에 따라 다른 인스턴스를 사용하기 때문에
+who_says(hunter2)  # 다르게 동작한다.
+who_says(brook)    # 이상!
 
+# 특수 메서드
+a = 3 + 8
 
+class Word():
+    def __init__(self, text):
+        self.text = text
+    def equals(self, words2):
+        return self.text.lower() == words2.text.lower()
+first = Word('ha')
+second = Word('HA')
+third = Word('eh')
+first.equals(second)  # True
+first.equals(third)   # False
 
+# equal() 메서드를 __eq__()메서드로 바꿔보자
+class Word():
+    def __init__(self, text):
+        self.text = text
+    def __eq__(self, word2):
+        return self.text.lower() == word2.text.lower()
+first = Word('ha')
+second = Word('HA')
+third = Word('eh')
+first == second
+first == third
+# 비교연산을 위한 마법 메서드
+# 산술연산을 위한 마법 메서드
+# 표는 p.190에서 찾아서 보세요~
 
+# 컴포지션(배합)
+# 자식클래스가 부모클래스처럼 행동하고 싶을 때 상속은 좋은 기술이지만 컴포지션이나 어그리게이션이 더 나을 수도 있다.
+class Bill():
+    def __init__(self, description):
+        self.description = description
+class Tail():
+    def __init__(self, length):
+        self.length = length
+class Duck():
+    def __init__(self, bill, tail):
+        self.bill = bill
+        self.tail = tail
+    def about(self):
+        print('This duck has a', self.bill.description, 'bill and a',
+              self.tail.length, 'tail')
+tail = Tail('long')
+bill = Bill('wide orange')
+duck = Duck(bill, tail)
+duck.about()
+# Duck()가 객체화된 duck에 변수로 tail과 bill이 들어갔다.
+# 객체화를 시키면 우선 __init__()만 실행이 되는데 여기에서 선언해주는 많은 self변수들을
+# duck객체에서 사용할 수 있게 된다.
+# duck은 매개변수로 받은 bill의 변수들(!)을 self.bill에 담고 tail의 변수들(!)을 self.tail에 담아서
+# 그 중에서 description과 length를 빼와서 함수를 실행시킨다고 보면된다.
 
+# 네임드 튜플
+# 네임드 튜플은 튜플의 서브클래스이다. 이름(.name)과 위치([offset]로 값에 접근할 수 있다.
+# 네임드 튜플 함수
+# 네임드 튜플은 모듈을 불러와야 한다.
+# 이전 코드 사용
+from collections import namedtuple
+class Duck():
+    def __init__(self, bill, tail):
+        self.bill = bill
+        self.tail = tail
+    def about(self):
+        print('This duck has a', self.bill.description, 'bill and a',
+              self.tail.length, 'tail')
+
+duck = Duck('wide orange', tail='long')   # 여기는 기존과 같음
+duck.bill   # wide orange                 # 여기는 기존과 같음
+duck.tail   # long                        # 여기는 기존과 같음
+
+Duck = namedtuple('Duck', 'bill tail')  # 클래스와 bill, tail을 네임드튜플과 간단한 문자열 속성으로 변환
+# 즉 클래스를 네임드 튜플로 만들어서 매개변수를 통하는 self변수들을 네임드튜플에 담아 값을 할당할 수 있다.
+# (bill='wide orange')
+duck = Duck('wide orange', tail='long')   # 그후에 네임드 튜플을 기존과 같이 객체화 시켜준다.
+duck   # 이렇게 딕셔너리처럼 사용가능
+duck.bill   # duck['bill'] 딕셔너리처럼 이렇게 쓰지 않는다.
+duck.tail   # 대신 이렇게 사용
+duck.bill = 'abcde'   # 이렇게 바꿀 수 없다!!!!!!!!!!!
+
+parts = {'bill':'wide orange', 'tail':'long'}
+parts
+duck2 = Duck(**parts)    # 이렇게 딕셔너리로 변환가능!@!#!@#!@#@!#!@#!@
+duck2                    # Duck(bill='wide orange', tail='long')
+
+duck2 = Duck(bill='wide orange', tail='long')   # 네임드 튜플 만드는 방법
+duck2
+# 네임드튜플은 불변한다. 하지만 필드를 바꿔서 또 다른 네임드 튜플을 반환할 수 있다.
+duck3 = duck2._replace(tail='magnicent', bill='crushing')   # wow
+duck3   # Duck(bill='crushing', tail='magnicent')
+
+# 딕셔너리와 비교!!!!
+duck_dict = {'bill':'wide orange', 'tail':'long'}
+duck_dict   # 확인
+duck_dict['color'] = 'green'   # 딕셔너리에 필드추가 가능
+duck_dict   # {'bill': 'wide orange', 'color': 'green', 'tail': 'long'}
+duck.color = 'green'  # 위에서 봤듯 당여히 안되고
+duck.color   # 당연히 반환도 못한다. 네임드 튜플이 아니기 때문에
 
