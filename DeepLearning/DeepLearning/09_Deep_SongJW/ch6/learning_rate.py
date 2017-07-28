@@ -2,39 +2,65 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
+# 부모 클래스 - 자식 클래스가 가질 공통적인 속성, 메소드 선언
 class Optimizer :
 
     def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
-        self.dict_point = defaultdict(lambda: np.array(point))
-        self.dict_trace = defaultdict(lambda: {'x': [point[0]], 'y': [point[1]]})
+        '''
+        초기화
+        :param point: 현재 위치 : numpy array
+        :param iter_num: 최적화 횟수 : int
+        :param small_lr: 학습률1 : float
+        :param proper_lr: 학습률2 : float
+        :param large_lr: 학습률3 : float
+        '''
+        self.dict_point = defaultdict(lambda: np.array(point))  # 학습률별로 현재 점의 위치를 저장 - 딕셔너리 기본값 설정
+        self.dict_trace = defaultdict(lambda: {'x': [point[0]], 'y': [point[1]]}) # 점의 궤적 저장
         self.iter_num = iter_num
-        self.lr_tup = (large_lr, proper_lr, small_lr)
+        self.lr_tup = (large_lr, proper_lr, small_lr)   # 학습률 튜플
 
     def grad(self, point):
         '''
         f(x,y) = (x**2)/20 + y**2 함수의 기울기를 반환하는 함수
-        :param x: np.array : 점의 위치 
-        :return: np.array : 점의 위치에서의 기울기
+        :param x: 점의 위치 : numpy array
+        :return: 점의 위치에서의 기울기 : numpy array
         '''
         return np.array([1 / 10, 2]) * point
 
     def method(self, point, lr):
+        '''
+        최적화 방법
+        :param point: 점의 위치 : numpy array 
+        :param lr: 학습률 : float
+        :return: 점의 위치 : numpy array
+        '''
         pass
 
     def optimize(self):
-        for i in range(self.iter_num):
-            for lr in self.lr_tup:
-                self.dict_point[lr] = self.method(self.dict_point[lr], lr)
-                self.dict_trace[lr]['x'].append(self.dict_point[lr][0])
+        '''
+        최적화 실행
+        :return: -
+        '''
+        for i in range(self.iter_num):  # 설정한 최적화 횟수만큼 수행
+            for lr in self.lr_tup:  # 학습률 리스트에 속한 학습률별로 최적화 수행, 과정 저장
+                self.dict_point[lr] = self.method(self.dict_point[lr], lr)  # 점 위치 갱신
+                self.dict_trace[lr]['x'].append(self.dict_point[lr][0]) # 점의 궤적 저장
                 self.dict_trace[lr]['y'].append(self.dict_point[lr][1])
 
-
+# 최적화 방법을 클래스로 선언, Optimizer 클래스 상속
+# 경사감소법
 class SGD(Optimizer):
 
     def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
         super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
 
     def method(self, point, lr):
+        '''
+        경사감소법
+        :param point: 점의 위치 : numpy array 
+        :param lr: 학습률 : float
+        :return: 새로운 점의 위치 : numpy array
+        '''
         return point - lr * self.grad(point)
 
 class Momentum(Optimizer):
