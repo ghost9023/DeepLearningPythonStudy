@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-from practice.network_module import *
+
 from dataset.mnist import load_mnist
+from practice.mnist_nn.network_module import *
 
 (x_train, t_train), (x_test, t_test) = load_mnist(one_hot_label=True, normalize=True)
 # nn_structure = (x_train.shape[1], 'ReLU', 50, 'ReLU', 35, 'SoftmaxWithLoss', 10)

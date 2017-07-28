@@ -48,15 +48,16 @@ class Optimizer :
                 self.dict_trace[lr]['y'].append(self.dict_point[lr][1])
 
 # 최적화 방법을 클래스로 선언, Optimizer 클래스 상속
-# 경사감소법
 class SGD(Optimizer):
-
+    '''
+    경사감소법
+    '''
     def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
         super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
 
     def method(self, point, lr):
         '''
-        경사감소법
+        경사감소법 - 현재 점의 위치에서 학습률 * 미분만큼 이동
         :param point: 점의 위치 : numpy array 
         :param lr: 학습률 : float
         :return: 새로운 점의 위치 : numpy array
@@ -64,28 +65,44 @@ class SGD(Optimizer):
         return point - lr * self.grad(point)
 
 class Momentum(Optimizer):
-
+    '''
+    모멘텀
+    '''
     def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
         super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
-        self.dict_v = defaultdict(lambda : np.zeros_like(point))
-        self.alpha = .9
+        self.dict_v = defaultdict(lambda : np.zeros_like(point))    # 학습률별로 이전 모멘텀을 유지하기 위한 딕셔너리
+        self.alpha = .9 # 모멘텀의 유지비율
 
     def method(self, point, lr):
+        '''
+        모멘텀 - 모멘텀을 학습률 * 미분만큼 가속하고 모멘텀만큼 이동.
+        :param point: 점의 위치 : numpy array
+        :param lr: 학습률 : flaot
+        :return: 갱신된 점의 위치 : numpy array
+        '''
         self.dict_v[lr] *= self.alpha
         self.dict_v[lr] -= lr * self.grad(point)
         return point + self.dict_v[lr]
 
 class AdaGrad(Optimizer):
-
+    '''
+    AdaGrad
+    '''
     def __init__(self, point, iter_num, small_lr, proper_lr, large_lr):
         super().__init__(point, iter_num, small_lr, proper_lr, large_lr)
-        self.dict_h = defaultdict(lambda : np.zeros_like(point))
+        self.dict_h = defaultdict(lambda : np.zeros_like(point))    # 학습률을 조정할 변수 h 를 담음
         self.epsilon = 1e-8
 
     def method(self, point, lr):
+        '''
+        AdaGrad - 점의 이동 방향별로 학습률을 조절함
+        :param point: 점의 위치 : numpy array 
+        :param lr: 학습률 : float
+        :return: 갱신된 점의 위치 : numpy array
+        '''
         gradient = self.grad(point)
-        self.dict_h[lr] += gradient ** 2
-        return point - lr * (1/np.sqrt(self.dict_h[lr] + self.epsilon)) * gradient
+        self.dict_h[lr] += gradient ** 2    # 현재 점에서의 미분의 각 원소별 제곱에 해당하는 값을 저장
+        return point - lr * (1/np.sqrt(self.dict_h[lr] + self.epsilon)) * gradient  # 학습률에 h**(-0.5) 를 곱해 학습률을 감소시킴
 
 class Adam(Optimizer):
 
@@ -98,6 +115,13 @@ class Adam(Optimizer):
         self.v = defaultdict(lambda : np.zeros_like(point))
 
     def method(self, point, lr, iter):
+        '''
+        Adam - 모름
+        :param point: 점의 위치 : numpy array 
+        :param lr: 학습률 : float
+        :param iter: 최적화횟수 : int
+        :return: 갱신된 점의 위치 : numpy array
+        '''
         gradient = self.grad(point)
         beta1, beta2 = self.beta1, self.beta2
         self.m[lr] = beta1 * self.m[lr] + (1 - beta1) * gradient
@@ -107,14 +131,21 @@ class Adam(Optimizer):
         return point - (lr / np.sqrt(v_t + self.epsilon)) * m_t
 
     def optimize(self):
+        '''
+        최적화 실행 - 최적화 횟수를 인수로 요구하므로 오버라이딩
+        :return: -
+        '''
         for i in range(self.iter_num):
             for lr in self.lr_tup:
                 self.dict_point[lr] = self.method(self.dict_point[lr], lr, i+1)
                 self.dict_trace[lr]['x'].append(self.dict_point[lr][0])
                 self.dict_trace[lr]['y'].append(self.dict_point[lr][1])
 
+# 점의 시작 위치
 x = np.array([-7., 2.])
 
+# 최적화 방법별로 객체 생성, 설정한 최적화 횟수별로 최적화 수행
+# small_lr, proper_lr, large_lr = 학습률 설정
 sgd = SGD(point=x, iter_num=50, small_lr=.4, proper_lr=.95, large_lr=1.003)
 sgd.optimize()
 
@@ -128,8 +159,10 @@ adg.optimize()
 ad = Adam(point=x, iter_num=30, small_lr=.2, proper_lr=.3, large_lr=.35)
 ad.optimize()
 
+# 각 최적화 방법별로 생성한 객체를 담음
 opt_lst = [sgd, mmt, adg, ad]
 
+# 최적화 방법별로 plot 생성
 plt.figure(figsize=(16, 6))
 for opt, i in zip(opt_lst, range(1,5)):
     plt.subplot(2, 2, i)

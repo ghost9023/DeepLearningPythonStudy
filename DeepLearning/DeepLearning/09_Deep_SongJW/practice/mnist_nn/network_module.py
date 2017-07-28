@@ -1,4 +1,4 @@
-from practice.layer_module import *
+from practice.mnist_nn.layer_module import *
 
 '''
 신경망을 구성하는 네트워크 클래스.

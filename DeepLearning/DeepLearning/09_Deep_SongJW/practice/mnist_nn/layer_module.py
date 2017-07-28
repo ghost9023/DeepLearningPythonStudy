@@ -38,13 +38,6 @@ class SoftmaxWithLoss:
         self.t = t
         loss = - np.sum(t * np.log(self.y + 1e-8)) / t.shape[0]
         return loss
-        # x = x - np.max(x, axis = 1).reshape(x.shape[0],1)
-        # x_exp = np.exp(x)
-        # x_exp_sum = np.sum(x_exp, axis = 1).reshape(x.shape[0],1)
-        # self.y = x_exp / x_exp_sum
-        # self.t = t
-        # loss = - np.sum(t*np.log(self.y + 1e-7))
-        # return loss
 
     def backward(self, dout):
         batch_size = self.t.shape[0]
@@ -74,11 +67,12 @@ class Affine:
         self.b -= self.db * self.lr
 
 if __name__ == '__main__':
-    x = np.array([1,2], ndmin=2)
-    w = np.array([[1,3,5],[2,4,6]])
-    b = np.array([1,2,3])
-    out = np.array([6, 13, 20], ndmin=2)
-
-    a = Affine(w, b, 0.1)
-    print(a.forward(x))
-    print(a.backward(out))
+    t = np.array([0,0,1]+[0]*7, ndmin=2)
+    x = np.array([.01]*6+[.05, .3, .1, .5], ndmin=2)
+    x2 = np.array([.01, .01, .9]+[.01]*6+[.02], ndmin=2)
+    soft = SoftmaxWithLoss()
+    print(soft.forward(x, t))
+    print(soft.backward(1))
+    soft2 = SoftmaxWithLoss()
+    print(soft2.forward(x2, t))
+    print(soft2.backward(1))
