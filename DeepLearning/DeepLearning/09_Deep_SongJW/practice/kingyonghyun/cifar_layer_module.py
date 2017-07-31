@@ -36,7 +36,8 @@ class SoftmaxWithLoss:
         x_exp_sum = np.sum(x_exp, axis=0)
         self.y = (x_exp / x_exp_sum).T
         self.t = t
-        loss = - np.sum(t * np.log(self.y + 1e-8)) / t.shape[0]
+        loss = - np.sum(np.log(self.y + 1e-8)) / t.shape[0]
+
         return loss
 
     def backward(self, dout):

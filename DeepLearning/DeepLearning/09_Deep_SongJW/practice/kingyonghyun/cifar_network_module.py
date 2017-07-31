@@ -1,4 +1,4 @@
-from practice.mnist_nn.layer_module import *
+from practice.kingyonghyun.cifar_layer_module import *
 
 '''
 신경망을 구성하는 네트워크 클래스.
@@ -47,5 +47,8 @@ class NeuralNetwork:
 
     def accuracy(self, x, t):
         y = self.predict(x)
-        acc = np.sum(np.argmax(y, axis=1) == np.argmax(t, axis=1)) / float(y.shape[0])
-        return acc
+        y = np.argmax(y, axis=1)  # [[0.1, 0.05, 0.5, 0.05, 0.1, 0.0, 0.0, 0.1, 0.0, 0.1], ....] -> [2, 4, 2, 1, 9, ....]
+        if t.ndim != 1: t = np.argmax(t, axis=1)  # t.ndim != 1 이면 one-hot encoding 인 경우이므로, 2차원 배열로 값이 들어온다
+
+        accuracy = np.mean(y == t)
+        return accuracy
