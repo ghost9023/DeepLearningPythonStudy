@@ -199,7 +199,210 @@ B3 = np.array([0.1,0.2])
 A3 = np.dot(Z2, W3) + B3
 Y = identity_function(A3)
 
-# 구현정리
+
+######## 3층 신경망 ##################################################################################
+######## 구현정리 ####################################################################################
+import numpy as np
+
 def init_network():
     network = {}
+    network['W1'] = np.array([[0.1,0.3,0.5], [0.2,0.4,0.6]])
+    network['b1'] = np.array([0.1,0.2,0.3])
+    network['W2'] = np.array([[0.1,0.4], [0.2,0.5], [0.3,0.6]])
+    network['b2'] = np.array([0.1,0.2])
+    network['W3'] = np.array([[0.1,0.3], [0.2,0.4]])
+    network['b3'] = np.array([0.1,0.2])
+    print('network', network)
+    return network
 
+def sigmoid(x):
+    return 1 / (1+np.exp(-x))
+
+def identity_function(x):
+    return x
+
+def forward(network, x):
+    W1, W2, W3 = network['W1'], network['W2'], network['W3']
+    b1, b2, b3 = network['b1'], network['b2'], network['b3']
+
+    a1 = np.dot(x, W1) + b1
+    z1 = sigmoid(a1)            # 시그모이드
+    a2 = np.dot(z1, W2) + b2
+    z2 = sigmoid(a2)            # 시그모이드
+    a3 = np.dot(z2, W3) + b3
+    y = identity_function(a3)   # 항등함수
+    return y
+
+network = init_network()
+x = np.array([1.0, 0.5])
+y = forward(network, x)
+print(y)   # [ 0.31682708  0.69627909]
+
+
+# 출력층 설계하기
+# 일반적으로 회귀에는 항등함수를, 분류에는 소프트맥스함수를 사용한다.
+
+# 항등함수와 소프트맥스함수 구현하기
+# 항등함수는 입력을 그대로 출력
+# 분류에서 사용하는 소프트맥스함수의 식
+y = np.exp(a) / np.sum(np.exp(a))
+
+# 소프트맥스 함수의 구현해보기
+a = np.array([0.3,2.9,4.0])
+exp_a = np.exp(a)
+print(exp_a)
+sum_exp_a = np.sum(exp_a)
+y = exp_a / sum_exp_a
+print(y)
+# 확률로 나타낼 수 있다. 아래는 함수로 구현한 것
+def softmax(a):
+    exp_a = np.exp(a)
+    sum_exp_a = np.sum(exp_a)
+    y= exp_a / sum_exp_a
+    return y
+
+# 소프트맥스 함수 구현시 주의사항
+# 입력값이 작다면 상관없지만 커지면 문제가 발생한다. 너무 큰 값끼리 연산을 하면 값이 불안정해진다.
+# 아래는 개선한 함수식
+def softmax(a):
+    c = np.max(a)
+    exp_a = np.exp(a-c)   # 제일 큰놈 빼주기, 오버플로 빼주기
+    sum_exp_a = np.sum(exp_a)
+    y = exp_a / sum_exp_a
+    return y
+
+# 소프트맥스 함수의 특징
+# softmax() 함수를 사용하면 신경망의 출력은 다음과 같이 계산할 수 있다.
+a = np.array([0.3,2.9,4.0])
+y = softmax(a)
+print(y)   # 값을 극대화시킨다.
+np.sum(y)  # 1이 나온다. --> 확률적인 결론을 낼 수 있도록 한다.
+
+# 출력층의 뉴런 수 정하기
+# 일반적으로 분류하는 범주의 수에 맞춰 출력층을 정해준다.
+# mnist같은 경우 0~9까지 정하는 것이기 때문에 10개가 된다.
+
+# 손글씨 숫자 인식
+# 일단 이미 학습된 매개변수를 사용하여 학습과정은 생략하고, 추론과정만 구현한다.
+# mnist 가져오기
+import sys, os
+sys.path.append(os.pardir)   # 부모 디렉토리의 파일을 가져올 수 있도록 설정
+from dataset.mnist import load_mnist
+
+(x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=False)
+# flatten은 1차원 배열로 축소하는 옵션
+# normalize는 픽셀의 0~255 사이의 값을 0~1 사이의 값으로 정규화하는 옵션
+# one_hot_label은 [0,1,0,0,0,0,0,0,0,0]의 형태로 저장
+
+print(x_train.shape)  # (60000, 784)
+print(t_train.shape)  # (60000,)
+print(x_test.shape)   # (10000, 784)
+print(t_test.shape)   # (10000,)
+
+# 이미지 불러오기
+# PIL 모듈 사용 (python image library)
+import sys, os
+sys.path.append(os.pardir)   # 부모 디렉토리의 파일을 가져올 수 있도록 설정
+import numpy as np
+from dataset.mnist import load_mnist
+from PIL import Image
+
+def img_show(img):   # 이미지 그려주는 함수생성
+    pil_img = Image.fromarray(np.uint8(img))
+    pil_img.show()
+
+(x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=False)
+
+img = x_train[0]
+label = t_train[0]
+print(label)
+
+print(img.shape)
+img = img.reshape(28,28)   # 원래 이미지의 모양으로 변형
+img_show(img)   # 함수실행
+
+
+# 신경망의 추론처리
+# mnist 데이터셋은 입력층 뉴런을 784(28*28)개, 출력층 뉴런을 10(0~9)개로 구성한다.
+# 은닉층은 두개, 첫번째 은닉층은 50개의 뉴런, 두번째 은닉층은 100개의 뉴런을 배치
+import sys, os
+sys.path.append(os.pardir)   # 부모 디렉토리의 파일을 가져올 수 있도록 설정
+import numpy as np
+from dataset.mnist import load_mnist
+from PIL import Image
+import pickle
+
+def get_data():   # 테스트파일 feature, label 반환하는 함수
+    (x_train, t_train), (x_test, t_test) = load_mnist(flatten=True, normalize=False, one_hot_label=False)
+    return x_test, t_test
+
+def init_network():   # 학습완료된 가중치 가져오기
+    with open("C:\\data\\sample_weight.pkl", 'rb') as f:
+        network = pickle.load(f)
+    return network
+
+def sigmoid(x):
+    return 1 / (1+np.exp(-x))
+
+def softmax(a):
+    c = np.max(a)
+    exp_a = np.exp(a-c)   # 제일 큰놈 빼주기, 오버플로 빼주기
+    sum_exp_a = np.sum(exp_a)
+    y = exp_a / sum_exp_a
+    return y
+
+def predict(network, x):   # 순전파
+    W1, W2, W3 = network['W1'], network['W2'], network['W3']
+    b1, b2, b3 = network['b1'], network['b2'], network['b3']
+
+    a1 = np.dot(x, W1) + b1
+    z1 = sigmoid(a1)            # 시그모이드
+    a2 = np.dot(z1, W2) + b2
+    z2 = sigmoid(a2)            # 시그모이드
+    a3 = np.dot(z2, W3) + b3
+    y = softmax(a3)   # 항등함수
+    return y
+
+x, t = get_data()   # (x_test, t_test)
+network = init_network()
+accuracy_cnt = 0
+for i in range(len(x)):
+    y = predict(network, x[i])   # 학습된 가중치 매개변수와 테스트할 데이터
+    p = np.argmax(y)
+    if p == t[i]:
+        accuracy_cnt += 1
+print("Accuracy:" + str(float(accuracy_cnt) / len(x)))
+# Accuracy:0.9207
+
+# 배치처리
+x, _ = get_data()   # x만 받고 t는 필요없다!
+network = init_network()   # 가중치 매개변수
+W1, W2, W3 = network['W1'], network['W2'], network['W3']
+x.shape
+x[0].shape
+W1.shape
+W2.shape
+W3.shape
+# 이 결과에서 다차원 배열의 대응하는 차원의 원소 수가 일치함을 알 수 있다.
+# (784,) * (784,50) * (50,100) * (100,10) -> (10,)
+# 원소 784개로 구성된 1차원 배열이 입력되어 마지막에는 원소가 10개인 1차원 배열이 출력되는 형태
+# 그렇다면 데이터 한건이 아닌 여러개의 데이터를 한번에 입력하는 경우를 생각해보자
+# 가령 이미지 100개를 묶어서 한번에 predict() 함수에 넘기기
+# (100,784) * (784,50) * (50,100) * (100,10) -> (100,10), 맨처음 100과 제일 마지막 10
+# 이처럼 하나로 묶은 입력데이터를 batch(배치)라고 한다.
+# 배치처리는 이미지 1장당 처리시간을 대폭 줄여준다. (원리와 이유는 p.103)
+# 이제 앞의 구현을 이용해서 배치처리를 적용해보자!
+x, t = get_data()   # (x_test, t_test)
+network = init_network()
+accuracy_cnt = 0
+batch_size = 100
+
+for i in range(0, len(x), batch_size):
+    x_batch = x[i:i+batch_size]          # 처음에 0부터 99  (100,784)
+    y_batch = predict(network, x_batch)  # 배열 입력 가능, 학습된 가중치, x값 이용해서 순전파
+    p = np.argmax(y_batch, axis=1)   # 100개의 각 행에서 가장 큰 수의 인덱스를 반환 (실제로 값과 인덱스가 같다.)
+    accuracy_cnt += np.sum(p == t[i:i+batch_size])
+    # 이렇게 하면 리스트의 각 원소를 비교하며 bool을 반환한다.
+    # [True  True  True  True  True  True  True  True False  True  True  True......]
+print("Accuracy:" + str(float(accuracy_cnt) / len(x)))
+# Accuracy:0.9207
