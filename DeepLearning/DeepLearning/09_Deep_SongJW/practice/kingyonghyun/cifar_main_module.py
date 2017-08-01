@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from practice.kingyonghyun.cifar_network_module import *
+from practice.mnist_nn.network_module import *
 
-train_file_list = ['c:/data/train/train_data_' + str(i) + '.csv' for i in range(1, 51)]
-test_file_list = ['c:/data/test/test_data_' + str(i) + '.csv' for i in range(1, 11)]
+train_file_list = ['D:\\download\\cifar10\\train\\train_data_' + str(i) + '.csv' for i in range(1, 51)]
+test_file_list = ['D:\\download\\cifar10\\test\\test_data_' + str(i) + '.csv' for i in range(1, 11)]
 
 def data_setting(data):
     # x : 데이터, y : 라벨
@@ -27,13 +27,17 @@ def read_data(filename):
 # 단층 : 입력 -> softmax with loss 10 -> 출력
 # nn_structure = (x_train.shape[1], 'SoftmaxWithLoss', 10)
 # 2층 : 입력 -> ReLU 50 -> softmax with loss 10 -> 출력
-nn_structure = (1024, 'ReLU', 50, 'SoftmaxWithLoss', 10)
+# nn_structure = (1024, 'ReLU', 50, 'SoftmaxWithLoss', 10)
 # 3층 : 입력 -> ReLU 50 -> ReLU 50 -> softmax with loss 10 -> 출력
 # nn_structure = (x_train.shape[1], 'ReLU', 50, 'ReLU', 50, 'SoftmaxWithLoss', 10)
 
-network = NeuralNetwork(nn_structure=nn_structure, lr=.0008)
+# 5층
+nn_structure = (1024, 'ReLU', 50, 'SoftmaxWithLoss', 10)
 
-optimize_method = 'Adam' # SGD, Momentum, AdaGrad
+network = NeuralNetwork(nn_structure=nn_structure, lr=.1, std_scale_method=.01) # std_scale_method = 'Xavier' | 'He' | float (default = .01)
+
+
+optimize_method = 'SGD' # SGD, Momentum, AdaGrad
 iteration = 5
 batch_size = 100
 

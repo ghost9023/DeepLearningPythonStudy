@@ -29,7 +29,7 @@ class NeuralNetwork:
     #     self.lastLayer = SoftmaxWithLoss()
     #     self.temp_loss = None
 
-    def __init__(self, nn_structure, std_scale_method=.01, lr=.1, gd_method='SGD'):
+    def __init__(self, nn_structure, std_scale_method=.01, lr=.1, gd_method='SGD', normalization=True):
         self.layers = []
         self.lr = lr
         # 784 - 20 - 20 - 10
@@ -48,7 +48,8 @@ class NeuralNetwork:
             self.layers.append(Affine(self.std_scale * np.random.randn(input_num, output_num),
                                       np.zeros(output_num), self.lr))
 
-            if activation.__class__.__name__ not in ['SoftmaxWithLoss']:
+            if activation.__name__ not in ['SoftmaxWithLoss'] and normalization:
+                print('ho', activation.__name__)
                 self.layers.append(BatchNormalizaition())
 
             self.layers.append(activation())
