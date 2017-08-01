@@ -8,13 +8,16 @@ from practice.mnist_nn.network_module import *
 # 단층 : 입력 -> softmax with loss 10 -> 출력
 # nn_structure = (x_train.shape[1], 'SoftmaxWithLoss', 10)
 # 2층 : 입력 -> ReLU 50 -> softmax with loss 10 -> 출력
-nn_structure = (x_train.shape[1], 'ReLU', 50, 'SoftmaxWithLoss', 10)
+# nn_structure = (x_train.shape[1], 'ReLU', 50, 'SoftmaxWithLoss', 10)
 # 3층 : 입력 -> ReLU 50 -> ReLU 50 -> softmax with loss 10 -> 출력
 # nn_structure = (x_train.shape[1], 'ReLU', 50, 'ReLU', 50, 'SoftmaxWithLoss', 10)
 
-nn = NeuralNetwork(nn_structure=nn_structure, lr=.01)
+nn_structure = (x_train.shape[1], 'Sigmoid', 50, 'Sigmoid', 50, 'Sigmoid', 50, 'Sigmoid', 50, 'SoftmaxWithLoss', 10)
+# nn_structure = (x_train.shape[1], 'ReLU', 50, 'ReLU', 50, 'ReLU', 50, 'ReLU', 50, 'SoftmaxWithLoss', 10)
 
-optimize_method = 'Adam' # SGD, Momentum, AdaGrad
+nn = NeuralNetwork(nn_structure=nn_structure, lr=.1, std_scale_method='Xavier') # std_scale_method = 'Xavier' | 'He' | float
+
+optimize_method = 'SGD' # SGD, Momentum, AdaGrad
 iteration = 9600
 batch_size = 100
 loss_lst = []
@@ -41,5 +44,6 @@ for i in range(iteration+1):
 
 plt.plot(train_acc_lst, label='train')
 plt.plot(test_acc_lst, label='test')
+plt.ylim(0, 1)
 plt.legend()
 plt.show()

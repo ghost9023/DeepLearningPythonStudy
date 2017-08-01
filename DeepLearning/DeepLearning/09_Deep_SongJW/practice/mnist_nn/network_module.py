@@ -6,18 +6,51 @@ from practice.mnist_nn.layer_module import *
 
 class NeuralNetwork:
 
-    def __init__(self, nn_structure, std_scale=.01, lr=.1, gd_method='SGD'):
+    # def __init__(self, nn_structure, std_scale_method=.01, lr=.1, gd_method='SGD'):
+    #     self.layers = []
+    #     self.lr = lr
+    #     # 784 - 20 - 20 - 10
+    #     # input:100x784 - Affine(W:784x20, b:20) - 'ReLU' -  Affine(W:20x20, b:20) - 'ReLU' - Affine(W:20x10, b:10) - SoftmaxWithLoss
+    #     # nn_structure == (784, 'ReLU', 20, 'ReLU', 20, 'SoftmaxWithLoss, 10)
+    #     self.std_scale = std_scale_method
+    #     for i in range(0, len(nn_structure) // 2):
+    #         input_num = nn_structure[2 * i]
+    #         output_num = nn_structure[2 * i + 2]
+    #         activation = eval(nn_structure[2 * i + 1])
+    #         if str(std_scale_method).isalpha():
+    #             if std_scale_method == 'Xavier':
+    #                 self.std_scale = np.sqrt(1 / input_num)
+    #             elif std_scale_method == 'He':
+    #                 self.std_scale = np.sqrt(2 / input_num)
+    #         self.layers.append(Affine(self.std_scale * np.random.randn(input_num, output_num),
+    #                                   np.zeros(output_num), self.lr))
+    #         self.layers.append(activation())
+    #
+    #     self.lastLayer = SoftmaxWithLoss()
+    #     self.temp_loss = None
+
+    def __init__(self, nn_structure, std_scale_method=.01, lr=.1, gd_method='SGD'):
         self.layers = []
         self.lr = lr
         # 784 - 20 - 20 - 10
         # input:100x784 - Affine(W:784x20, b:20) - 'ReLU' -  Affine(W:20x20, b:20) - 'ReLU' - Affine(W:20x10, b:10) - SoftmaxWithLoss
         # nn_structure == (784, 'ReLU', 20, 'ReLU', 20, 'SoftmaxWithLoss, 10)
+        self.std_scale = std_scale_method
         for i in range(0, len(nn_structure) // 2):
             input_num = nn_structure[2 * i]
             output_num = nn_structure[2 * i + 2]
             activation = eval(nn_structure[2 * i + 1])
-            self.layers.append(Affine(std_scale * np.random.randn(input_num, output_num),
+            if str(std_scale_method).isalpha():
+                if std_scale_method == 'Xavier':
+                    self.std_scale = np.sqrt(1 / input_num)
+                elif std_scale_method == 'He':
+                    self.std_scale = np.sqrt(2 / input_num)
+            self.layers.append(Affine(self.std_scale * np.random.randn(input_num, output_num),
                                       np.zeros(output_num), self.lr))
+
+            if activation.__class__.__name__ not in ['SoftmaxWithLoss']:
+                self.layers.append(BatchNormalizaition())
+
             self.layers.append(activation())
 
         self.lastLayer = SoftmaxWithLoss()

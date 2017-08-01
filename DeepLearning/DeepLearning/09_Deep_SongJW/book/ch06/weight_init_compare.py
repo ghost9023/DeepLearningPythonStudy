@@ -26,7 +26,7 @@ optimizer = SGD(lr=0.01)
 networks = {}
 train_loss = {}
 for key, weight_type in weight_init_types.items():
-    networks[key] = MultiLayerNet(input_size=784, hidden_size_list=[100, 100, 100, 100],
+    networks[key] = MultiLayerNet(input_size=784, hidden_size_list=[50, 50, 50, 50],
                                   output_size=10, weight_init_std=weight_type, activation='relu')
     train_loss[key] = []
 
