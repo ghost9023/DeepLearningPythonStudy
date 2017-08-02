@@ -374,7 +374,7 @@ for i in range(len(x)):
 print("Accuracy:" + str(float(accuracy_cnt) / len(x)))
 # Accuracy:0.9207
 
-# 배치처리
+# 배치처리(활성화함수까지)
 x, _ = get_data()   # x만 받고 t는 필요없다!
 network = init_network()   # 가중치 매개변수
 W1, W2, W3 = network['W1'], network['W2'], network['W3']
