@@ -57,6 +57,3 @@ plt.xlabel('x')   # x축 이름
 plt.ylabel('y')   # y축 이름
 plt.title('sin & cos')   # 제목
 plt.show()   # 안해도 그래프 그려짐
-
-#
-#

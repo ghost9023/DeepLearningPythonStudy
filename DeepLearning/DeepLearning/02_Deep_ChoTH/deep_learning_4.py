@@ -8,7 +8,7 @@
 # 주어진 문제의 패턴을 발견하려고 시도한다.
 
 # 훈련데이터와 시험데이터
-# 기계학습 문제느느 데이터를 훈련데이터와 시험데이터로 나눠 학습과 실험을 수행하는 것이 일반적이다.
+# 기계학습 문제는 데이터를 훈련데이터와 시험데이터로 나눠 학습과 실험을 수행하는 것이 일반적이다.
 # 우리가 원하는 것은 범용적으로 사용할 수 있는 모델을 만드는 것이기 때문에 과적합(오버피팅)을 확인하기 위해 시험데이터가 필요하다.
 # 시험데이터는 훈련데이터에 포함되어 있지 않은 데이터
 
@@ -96,6 +96,7 @@ def cross_entropy_error(y,t):
 def numerical_diff(f, x):
     h = 1e-4   # 0.0001
     return (f(x+h) - f(x-h)) / (2*h)
+# 값 하나의 미분값 구하는 함수
 
 # y = (0.01*x)**2 + 0.1*x 를 파이썬으로 구현해보고 이 식을 미분하는 함수를 만들어보자 (예로 든 이차함수)
 import numpy as np
@@ -121,5 +122,64 @@ numerical_diff(function_1, 10)   # 위의 식에서 x가 10일 때 기울기
 def function_2(x):
     return x[0]**2 + x[1]**2
 # 그릇을 엎어놓은 모양의 3차원함수가 만들어진다.
+# 이와 같이 변수가 여러개인 상황에서 변수 하나에 대한 미분을 편미분이라고 한다.
+# 일단 미분을 구하는데에는 상수(y절편)이 필요 없기 때문에 무시해도 괜찮아요~
+def function_tmp1(x0):
+    return x0*x0 + 4.0**2
+numerical_diff(function_tmp1, 3.0)
 
+def function_tmp1(x0):
+    return x0*x0
+numerical_diff(function_tmp1, 3.0)
+# 기울기가 거의 같다.(6.000000000000378), 차이는 수치미분에 의한 차이로 해석됨
 
+def function_tmp2(x1):
+    return 3.0**2 + x1*x1
+numerical_diff(function_tmp2, 4.0)
+# 7.999999999999119
+
+# 기울기
+# 앞절의 예에서는 x0과 x1의 편미분을 변수별로 따로 계산했다.
+# 두 변수를 동시에 계산하고 싶다면 어떻게 해야할까? (가령 x0=3, x1=4일 때)
+# (x0, x1, x2, x3)의 기울기를 (x0미분, x1미분, x2미분, x3미분)과 같이 벡터의 형태로 정리한 것을 기울기(gradient)라고 한다.
+# 기울기를 구하는 함수구현
+def numerical_gradient(f, x):
+    h = 1e-4   # 0.0001
+    grad = np.zeros_like(x)    # x와 형상(shape)이 같은 배열을 생성
+    for idx in range(x.size):  # .size는 배열 안에 있는 원소의 수
+        tmp_val = x[idx]   # 원래값을 저장해놓을 변수
+        x[idx] = tmp_val + h
+        fxh1 = f(x)   # y값 구하기
+        x[idx] = tmp_val - h
+        fxh2 = f(x)   # y값 구하기
+        grad[idx]= (fxh1-fxh2) / (2*h)   # 기울기 구하기
+        x[idx] = tmp_val   # 값 복원
+    return grad
+
+def function_2(x):
+    return x[0]**2 + x[1]**2
+
+numerical_gradient(function_2, np.array([3.0, 4.0]))   # array([ 6.,  8.])
+numerical_gradient(function_2, np.array([0.0, 2.0]))   # array([ 0.,  4.])
+numerical_gradient(function_2, np.array([3.0, 0.0]))   # array([ 6.,  0.])
+
+# 경사법(경사하강법)
+# 손실함수가 최소값이 될때의 매개변수값을 찾아야한다.
+# 기울기가 가리키는 쪽은 각 장소에서 함수의 출력값을 가장 크게 줄이는 방향
+# 각 지점에서 함수의 값을 낮추는 방안을 제시하는 지표가 기울기이지만
+# 기울기가 가리키는 곳에 실제로 함수의 최소값이 있는지 보장할 수 없다.
+# 함수가 최소값, 극소값, 안장점이 되는 장소의 기울기가 모두 0이기 때문에 기울기가 0이라고 해서 반드시 최소값이라고 볼 수 없다.
+# 경사법을 함수로 구현하기
+def gradient_descent(f, init_x, lr=0.01, step_num=100):
+    x = init_x
+    for i in range(step_num):
+        grad = numerical_gradient(f, x)   # 기울기 벡터 반환
+        x -= lr * grad
+        # 기울기(미분)값에 learning_rate를 곱해서 입력값(x)에서 빼주는 과정을 반복한다.
+        # 기울기는 경사감소의 방향과 정도를 결정한다. 기울기가 작아지면 이동하는 거리도 그만큼 줄어든다.
+    return x
+
+# 경사법으로 f(x0, x1) = x0^2 + x1^2의 최소값을 구하여라
+def function_2(x):
+    return x[0]**2 + x[1]**2
+init_x = np.array([-3.0, 4.0])
