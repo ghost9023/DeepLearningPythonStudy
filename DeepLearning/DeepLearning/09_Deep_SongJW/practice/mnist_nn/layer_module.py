@@ -62,13 +62,15 @@ class Affine:
         self.adam_params = {}
         self.lst = ['W', 'b']
         self.iter = 1
+        self.weight_decay_lambda = .01
 
     def forward(self, x):
         self.x = x
         return np.dot(x, self.params['W']) + self.params['b']
 
     def backward(self, dout):
-        self.grad['W'] = np.dot(self.x.T, dout)
+        # self.grad['W'] = np.dot(self.x.T, dout)
+        self.grad['W'] = np.dot(self.x.T, dout) + self.weight_decay_lambda * self.params['W']
         self.grad['b'] = np.sum(dout, axis=0)
         self.dx = np.dot(dout, self.params['W'].T)
         return self.dx
@@ -117,11 +119,57 @@ class BatchNormalizaition:
         self.var = None
 
     def forward(self, x):
+        epsilon = 1e-8
+        mu = np.sum(x, axis=0) / x.shape[0]
+        self.xmu = x - mu
+        sq = self.xmu**2
+        self.var = np.sum(sq, axis=0) / sq.shape[0] + epsilon
+        self.sqrtvar = np.sqrt(self.var)
+        self.ivar = 1 / self.sqrtvar
+        self.xhat = self.xmu * self.ivar
+        gxhat = self.gamma * self.xhat
+        out = gxhat + self.beta
+
+        return out
+
+    def backward(self, dout):
+        D, N = dout.shape
+        self.dbeta = np.sum(dout, axis = 0)
+        dgxhat = dout
+        self.dgamma = np.sum(self.xhat * dgxhat, axis=0)
+        dxhat = dgxhat * self.gamma
+        dxmu1 = dxhat * self.ivar
+        divar = np.sum(dxhat * self.xmu, axis=0)
+        dsqrtvar = -1 * divar / (self.sqrtvar**2)
+        dvar = dsqrtvar / (2 * np.sqrt(self.var))
+        dsq = np.ones((D, N)) * dvar / D
+        dxmu2 = 2 * self.xmu * dsq
+        dx1 = dxmu1 + dxmu2
+        dmu = -1 * np.sum(dxmu1 + dxmu2, axis=0)
+        dx2 = np.ones((D, N)) * dmu / D
+        dx = dx1 + dx2
+
+        return dx
+
+class BatchNormalizaition_T:
+    def __init__(self):
+        self.gamma = 1
+        self.beta = 0
+        self.dgamma = None
+        self.dbeta = None
+        self.xhat = None
+        self.ivar = None
+        self.xmu = None
+        self.sqrtvar = None
+        self.var = None
+
+    def forward(self, x):
+        epsilon = 1e-8
         x = x.T
         mu = np.sum(x, axis=0) / x.shape[0]
         self.xmu = x - mu
         sq = self.xmu**2
-        self.var = np.sum(sq, axis=0) / sq.shape[0]
+        self.var = np.sum(sq, axis=0) / sq.shape[0] + epsilon
         self.sqrtvar = np.sqrt(self.var)
         self.ivar = 1 / self.sqrtvar
         self.xhat = self.xmu * self.ivar

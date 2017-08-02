@@ -1,4 +1,6 @@
 from practice.mnist_nn.layer_module import *
+from book.common.layers import BatchNormalization as book_BatchNormalization
+from book.common.layers import Dropout
 
 '''
 신경망을 구성하는 네트워크 클래스.
@@ -32,6 +34,7 @@ class NeuralNetwork:
     def __init__(self, nn_structure, std_scale_method=.01, lr=.1, gd_method='SGD', normalization=True):
         self.layers = []
         self.lr = lr
+        self.weight_decay_lambda = .01
         # 784 - 20 - 20 - 10
         # input:100x784 - Affine(W:784x20, b:20) - 'ReLU' -  Affine(W:20x20, b:20) - 'ReLU' - Affine(W:20x10, b:10) - SoftmaxWithLoss
         # nn_structure == (784, 'ReLU', 20, 'ReLU', 20, 'SoftmaxWithLoss, 10)
@@ -50,7 +53,9 @@ class NeuralNetwork:
 
             if activation.__name__ not in ['SoftmaxWithLoss'] and normalization:
                 print('ho', activation.__name__)
-                self.layers.append(BatchNormalizaition())
+                self.layers.append(book_BatchNormalization(beta=0, gamma=1))
+                # self.layers.append(BatchNormalizaition())
+                # self.layers.append(BatchNormalizaition_T())
 
             self.layers.append(activation())
 
@@ -62,10 +67,19 @@ class NeuralNetwork:
             x = layer.forward(x)
         return x
 
+    # def loss(self, x, t):
+    #     y = self.predict(x)
+    #     loss = self.layers[-1].forward(y, t)
+    #     return loss
+
     def loss(self, x, t):
         y = self.predict(x)
+        weight_decay = 0
         loss = self.layers[-1].forward(y, t)
-        return loss
+        for i in self.layers:
+            if i.__class__.__name__ == 'Affine':
+                weight_decay += 0.5 * self.weight_decay_lambda * np.sum(i.params['W'] ** 2)
+        return loss + weight_decay
 
     def gradient_descent(self, x, t, method):
         self.temp_loss = self.loss(x,t)

@@ -1,6 +1,6 @@
 import numpy as np
+from dataset.mnist import load_mnist
 
-a = np.array([[1,2,3], [4,5,6]])
-b = np.array([[10, 10, 10]])
+(x_train, t_train), (x_test, t_test) = load_mnist(flatten=False, one_hot_label=True)
 
-print(a*b)
+print(x_train[0].reshape(1,1,28,28).shape)
