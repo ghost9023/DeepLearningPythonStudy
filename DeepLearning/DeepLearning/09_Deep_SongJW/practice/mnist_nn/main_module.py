@@ -15,7 +15,7 @@ from practice.mnist_nn.network_module import *
 # nn_structure = (x_train.shape[1], 'Sigmoid', 50, 'Sigmoid', 50, 'Sigmoid', 50, 'Sigmoid', 50, 'SoftmaxWithLoss', 10)
 nn_structure = (x_train.shape[1], 'ReLU', 50, 'ReLU', 50, 'ReLU', 50, 'ReLU', 50, 'SoftmaxWithLoss', 10)
 
-nn = NeuralNetwork(nn_structure=nn_structure, lr=.1, std_scale_method='He') # std_scale_method = 'Xavier' | 'He' | float
+nn = NeuralNetwork(nn_structure=nn_structure, lr=.1, std_scale_method='He', normalization=True) # std_scale_method = 'Xavier' | 'He' | float
 
 optimize_method = 'SGD' # SGD, Momentum, AdaGrad
 iteration = 9600
