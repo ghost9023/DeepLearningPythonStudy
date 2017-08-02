@@ -282,3 +282,10 @@ class Pooling:
         dx = col2im(dcol, self.x.shape, self.pool_h, self.pool_w, self.stride, self.pad)
         
         return dx
+
+if __name__ == '__main__' :
+    w = np.array([[1,2,3], [4,5,6]])
+    b = np.array([10,10,10])
+    x = np.array([1,2], ndmin = 2)
+    a = Affine(w, b)
+    print(a.forward(x))
