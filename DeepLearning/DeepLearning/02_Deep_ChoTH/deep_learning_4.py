@@ -76,7 +76,7 @@ x_batch = x_train[batch_mask]   # 이건 왜 따로 뽑는거야?
 t_batch = t_train[batch_mask]   # 인덱스로 사용해서 10개 선택하고 그것과 비교
 
 def cross_entropy_error(y,t):
-    if y.dim == 1:
+    if y.ndim == 1:
         t = t.reshape(1, t.size)   # 2차원으로 바꿔주기
         y = y.reshape(1, y.size)   # 2차원으로 바꿔주기
     batch_size = y.shape[0]        # 들어온 행의 수대로 배치사이즈 할당
@@ -173,8 +173,8 @@ numerical_gradient(function_2, np.array([3.0, 0.0]))   # array([ 6.,  0.])
 def gradient_descent(f, init_x, lr=0.01, step_num=100):
     x = init_x
     for i in range(step_num):
-        grad = numerical_gradient(f, x)   # 기울기 벡터 반환
-        x -= lr * grad
+        grad = numerical_gradient(f, x)   # 기울기(미분값) 벡터 반환
+        x -= lr * grad   # 기울기를 구한 후 그를 이용해 x값을 갱신해서 재귀
         # 기울기(미분)값에 learning_rate를 곱해서 입력값(x)에서 빼주는 과정을 반복한다.
         # 기울기는 경사감소의 방향과 정도를 결정한다. 기울기가 작아지면 이동하는 거리도 그만큼 줄어든다.
     return x
@@ -183,3 +183,216 @@ def gradient_descent(f, init_x, lr=0.01, step_num=100):
 def function_2(x):
     return x[0]**2 + x[1]**2
 init_x = np.array([-3.0, 4.0])
+gradient_descent(function_2, init_x=init_x, lr=0.1, step_num=100)
+# array([ -1.25592487e-19,   1.66263303e-19]), (0, 0)에서 기울기가 가장 작다. 0에 가깝다.
+
+# 학습률이 너무 크거나 너무 작지 않아야 한다.
+# 학습률이 너무 클 경우 발산해버릴 위험이 있고 학습률이 너무 작은 경우 로컬 미니마에 빠지거나 이동값이 아예 소멸할 수 있다.
+init_x = np.array([-3.0, 4.0])
+gradient_descent(function_2, init_x=init_x, lr=10.0, step_num=100)
+# array([ -2.60465215e+13,   2.57982892e+13]), x값이 발산해버린다.
+
+init_x = np.array([-3.0, 4.0])
+gradient_descent(function_2, init_x=init_x, lr=0.001, step_num=100)
+# array([-2.45570041,  3.27426722]), 값이 갱신되지 않고 끝나버린다.
+
+
+
+# 신경망에서의 기울기!!!!!!
+# 신경망 학습에서도 기울기를 구해야 한다.
+# 가중치 매개변수에 대한 손실함수의 기울기를 말한다.
+# 간단한 신경망을 예로 들어 실제로 기울기를 구하는 코드 구현
+import sys, os
+sys.path.append(os.pardir)
+import numpy as np
+# from common.functions import softmax, cross_entropy_error  # 밑에 직접 적어놓음
+# from common.gradient import numerical_gradient             # 밑에 직접 적어놓음
+
+def softmax(a):                 # 소프트맥스 @@@@
+    c = np.max(a)
+    exp_a = np.exp(a-c)   # 제일 큰놈 빼주기, 오버플로 빼주기
+    sum_exp_a = np.sum(exp_a)
+    y = exp_a / sum_exp_a
+    return y
+
+def cross_entropy_error(y,t):   # 크로스 엔트로피 에러 @@@@
+    if y.ndim == 1:
+        t = t.reshape(1, t.size)   # 2차원으로 바꿔주기
+        y = y.reshape(1, y.size)   # 2차원으로 바꿔주기
+    batch_size = y.shape[0]        # 들어온 행의 수대로 배치사이즈 할당
+    return -np.sum(t * np.log(y)) / batch_size   # 다 더해서 배치사이즈로 나눠주기, 즉 평균 구하는 것
+
+def numerical_gradient(f, x):   # 특정값에서 손실함수의 기울기를 벡터로 출력 @@@@, 독립변수가 여러개, 편미분 여러개 한번에 하기
+    # 여기에는 x값에 net.W가 들어가기 때문에 h값을 더해주고 뺄때 net.W값이 갱신된다.
+    h = 1e-4   # 0.0001
+    grad = np.zeros_like(x)     # x와 형상(shape)이 같은 배열을 생성
+    it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+    while not it.finished:  # .size는 배열 안에 있는 원소의 수
+        idx = it.multi_index
+        tmp_val = x[idx]    # 원래값을 저장해놓을 변수
+        x[idx] = float(tmp_val) + h
+        fxh1 = f(x)   # y값 구하기, f(x+h)
+        x[idx] = tmp_val - h
+        fxh2 = f(x)   # y값 구하기, f(x-h)
+        grad[idx]= (fxh1-fxh2) / (2*h)   # 기울기 구하기
+        x[idx] = tmp_val   # 값 복원
+        it.iternext()
+        return grad
+
+class simpleNet:
+    def __init__(self):
+        self.W = np.random.randn(2, 3)   # 정규분포로 초기화, 즉 0에 가까울 수록 빈도가 많아진다는 뜻이다. 가중치 래덤
+    def predict(self, x):
+        return np.dot(x, self.W)
+    def loss(self, x, t):
+        z = self.predict(x)
+        y = softmax(z)
+        loss = cross_entropy_error(y, t)   # 손실함수까지의 과정, 값은 하나가 나오지만 x에 따라 변하는 함수가 나온다고 이해하면 편하다.
+        return loss
+
+net = simpleNet()
+print('net.W', net.W)   # 가중치 매개변수
+x = np.array([0.6, 0.9])
+p = net.predict(x)   # 랜덤가중치와 x값의 연산, 확인용!
+print('p', p)
+np.argmax(p)   # 최대값의 인덱스 출력, 0
+t = np.array([0,0,1])
+net.loss(x, t)
+
+# 이어서 기울기를 구해보자!!!!@#!@#@!#@!#@!#@!#!@#!@#!@#!@
+# numerical_gradient(f, x)를 사용해서 구하면 된다.
+def f(W):
+    return net.loss(x, t)   # x는 입력(x = np.array([0.6, 0.9])), t는 레이블(t = np.array([0,0,1])), w는 더미(형식상)
+dW = numerical_gradient(f, net.W)
+print(dW)
+
+# lambda()를 활용하여 위의 함수 구현
+f = lambda w: net.loss(x, t)
+dW = numerical_gradient(f, net.W)   # 손실함수에서 x축이 W일때의 기울기
+
+
+## 학습알고리즘 구현@@@@@@@@@ 하기
+# 전제 : 신경망에는 적응 가능한 가중치와 편향이 있고, 이 가중치와 편향을 훈련데이터에 적응하도록 조정하는 과정을 '학습'이라고 한다.
+# 1단계-미니배치 : 훈련데이터 중 일부를 무작위로 가져온다. 이렇게 선별한 데이터를 미니배치라 하며, 그 미니배치의 손실함수 값을 줄이는 것이 목표이다.
+# 2단계-기울기 산출 : 미니배치의 손실 값을 줄이기 위해 각 가중치 매개변수의 기울기를 구합니다. 기울기는 손실함수의 값을 가장 작게하는 방향을 제시한다.
+# 3단계-매개변수 갱신 : 가중치 매개변수를 기울기 방향으로 아주 조금 갱신한다.
+# 4단계-반복 : 1~3단계를 반복한다.
+
+# 2층 신경망 클래스 구현하기
+# coding: utf-8
+import sys, os
+sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
+# from common.functions import *
+# from common.gradient import numerical_gradient
+
+def sigmoid(x):
+    return 1 / (1+np.exp(-x))
+
+def softmax(a):  # 소프트맥스 @@@@
+    c = np.max(a)
+    exp_a = np.exp(a - c)  # 제일 큰놈 빼주기, 오버플로 빼주기
+    sum_exp_a = np.sum(exp_a)
+    y = exp_a / sum_exp_a
+    return y
+
+
+def cross_entropy_error(y, t):  # 크로스 엔트로피 에러 @@@@
+    if y.ndim == 1:
+        t = t.reshape(1, t.size)  # 2차원으로 바꿔주기
+        y = y.reshape(1, y.size)  # 2차원으로 바꿔주기
+    batch_size = y.shape[0]  # 들어온 행의 수대로 배치사이즈 할당
+    return -np.sum(t * np.log(y)) / batch_size  # 다 더해서 배치사이즈로 나눠주기, 즉 평균 구하는 것
+
+
+def numerical_gradient(f, x):  # 특정값에서 손실함수의 기울기를 벡터로 출력 @@@@, 독립변수가 여러개, 편미분 여러개 한번에 하기
+    # 여기에는 x값에 net.W가 들어가기 때문에 h값을 더해주고 뺄때 net.W값이 갱신된다.
+    h = 1e-4  # 0.0001
+    grad = np.zeros_like(x)  # x와 형상(shape)이 같은 배열을 생성
+    it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+    while not it.finished:  # .size는 배열 안에 있는 원소의 수
+        idx = it.multi_index
+        tmp_val = x[idx]  # 원래값을 저장해놓을 변수
+        x[idx] = float(tmp_val) + h
+        fxh1 = f(x)  # y값 구하기, f(x+h)
+        x[idx] = tmp_val - h
+        fxh2 = f(x)  # y값 구하기, f(x-h)
+        grad[idx] = (fxh1 - fxh2) / (2 * h)  # 기울기 구하기
+        x[idx] = tmp_val  # 값 복원
+        it.iternext()
+        return grad
+
+class TwoLayerNet:
+    def __init__(self, input_size, hidden_size, output_size, weight_init_std=0.01):
+        # 가중치 초기화
+        self.params = {}
+        self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
+        self.params['b1'] = np.zeros(hidden_size)
+        self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
+        self.params['b2'] = np.zeros(output_size)
+
+    def predict(self, x):
+        W1, W2 = self.params['W1'], self.params['W2']
+        b1, b2 = self.params['b1'], self.params['b2']
+
+        a1 = np.dot(x, W1) + b1
+        z1 = sigmoid(a1)
+        a2 = np.dot(z1, W2) + b2
+        y = softmax(a2)
+
+        return y
+
+    # x : 입력 데이터, t : 정답 레이블
+    def loss(self, x, t):
+        y = self.predict(x)
+
+        return cross_entropy_error(y, t)   # 손실함수 출력
+
+    def accuracy(self, x, t):
+        y = self.predict(x)
+        y = np.argmax(y, axis=1)
+        t = np.argmax(t, axis=1)
+
+        accuracy = np.sum(y == t) / float(x.shape[0])
+        return accuracy
+
+    # x : 입력 데이터, t : 정답 레이블, W : dummy
+    def numerical_gradient(self, x, t):
+        loss_W = lambda W: self.loss(x, t)   # 손실함수를 반환한다.
+
+        grads = {}
+        grads['W1'] = numerical_gradient(loss_W, self.params['W1'])   # 이건 미리 만들어놓은 함수를 말한다. 위의 메서드와 이름은 같지만 다른 함수
+        grads['b1'] = numerical_gradient(loss_W, self.params['b1'])   # x와 t에 의해 만들어진 손실함수에서 W나 b에 대한 미분값을 구한다. (수치미분사용)
+        grads['W2'] = numerical_gradient(loss_W, self.params['W2'])   # numerical_gradient는 처음에는 각 변수에 대한 편미분의 값을 출력하고
+        grads['b2'] = numerical_gradient(loss_W, self.params['b2'])   # 그다음에는 w값을 갱신하기 위해 사용된다.
+
+        return grads
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
