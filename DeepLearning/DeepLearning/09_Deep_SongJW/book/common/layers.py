@@ -284,8 +284,13 @@ class Pooling:
         return dx
 
 if __name__ == '__main__' :
-    w = np.array([[1,2,3], [4,5,6]])
-    b = np.array([10,10,10])
-    x = np.array([1,2], ndmin = 2)
-    a = Affine(w, b)
-    print(a.forward(x))
+    x1 = np.arange(32).reshape(1, 2, 4, 4)
+    w1 = np.arange(18).reshape(1, 2, 3, 3)
+    b1 = 1
+    con = Convolution(w1, b1, 1, 0)
+    dout = con.forward(x1)
+    print(dout)
+    print(con.backward(dout))
+    print(con.W)
+    print(con.dW)
+    print(con.db)

@@ -38,39 +38,69 @@ class SoftmaxWithLoss:
 
 
 class conv:
-    def __init__(self, f, b, stride=1, pad=0):
-        self.f = f
+    def __init__(self, W, b, stride, pad):
+        self.W = W.flatten().reshape(W.shape[0], -1).T
         self.b = b
+        self.x = None
         self.stride = stride
         self.pad = pad
+        self.dW = None
+        self.db = None
+        self.os_W = W.shape
+        self.os_x = None
 
     def forward(self, x):
-        FN, C, FH, FW = self.f.shape
-        f = self.f.flatten().reshape(FN, -1)
-        col_x = img2col(x, FH, FW, self.stride, self.pad)
+        self.os_x = x.shape
         N, C, H, W = x.shape
-        OH = int((H + 2*self.pad - FH) / self.stride + 1)
-        OW = int((W + 2 * self.pad - FW) / self.stride + 1)
-        x = np.dot(col_x, f.T) + self.b
-        return x.reshape(N, OH, OW, -1).transpose(0,3,1,2)
+        FN, C, FH, FW = self.os_W
+        OH, OW = int((H + 2 * self.pad - FH) / self.stride + 1), int((W + 2 * self.pad - FW) / self.stride + 1)
+        self.x = img2col(x, FH, FW, self.stride, self.pad)
+        xW = np.dot(self.x, self.W) + self.b
+        return xW.reshape(N, OH, OW, FN).transpose(0, 3, 1, 2)
 
     def backward(self, dout):
-        pass
+        N, C, H, W = self.os_x
+        FN, C, FH, FW = self.os_W
+        OH, OW = int((H + 2 * self.pad - FH) / self.stride + 1), int((W + 2 * self.pad - FW) / self.stride + 1)
+        dout = dout.transpose(0, 2, 3, 1).reshape(-1, FN)
+        self.db = np.sum(dout, axis=0)
+        self.dW = np.dot(self.x.T, dout)
+        dx = np.dot(dout, self.W.T).reshape(-1, C, FH, FW)
+        base = np.zeros((N, C, H, W))
+        n = 0
+        for i in range(N):
+            for h in range(0, OH, self.stride):
+                for w in range(0, OW, self.stride):
+                    base[i, :, h:h+FH, w:w+FW] += dx[n]
+                    n += 1
+        return base
 
 class pooling:
-    def __init__(self, ph, pw, stride):
-        self.ph = ph
-        self.pw = pw
-        self.stride = stride
+
+    def __init__(self):
+        pass
 
     def forward(self, x):
         N, C, H, W = x.shape
-        y = img2col(x, fh=self.ph, fw=self.pw, stride=self.stride)
-        y = y.T.reshape(N, C, H, W).transpose(0, 1, 3, 2)
-        max_y = np.max(y, axis=3)
-        result = max_y.reshape(N, C, int(H/2), int(W/2))
-        return result
-
+        x = x.reshape(1, 1, -1, 4)
+        x = img2col(x, 2, 2, 2)
+        max_ind = np.argmax(x, axis=1)
+        x = x[[i for i in range(x.shape[0])], max_ind].reshape(N, C, int(H / 2), int(W / 2))
+        return x
 
 if __name__ == '__main__':
     pass
+    # x1 = np.arange(32).reshape(1, 2, 4, 4)
+    # w1 = np.arange(18).reshape(1, 2, 3, 3)
+    # b1 = 1
+    # con = conv(w1, b1, 1, 0)
+    # dout = con.forward(x1)
+    # print(dout)
+    # print(con.backward(dout))
+    # print(con.W.shape)
+    # print(con.dW.shape)
+    # print(con.db)
+
+    p = pooling()
+    x = np.arange(48 * 2).reshape(2, 3, 4, 4)
+    print(p.forward(x))
