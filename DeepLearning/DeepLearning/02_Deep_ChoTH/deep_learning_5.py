@@ -85,8 +85,110 @@ print(price)   # 220.00000000000003
 
 # 역전파 구현
 dprice = 1  # 처음에 들어오는 손실함수의 값이라고 볼 수있다.
-dapple_price, dtax = mul_tax_layer.backward(dprice)  # self.x에 apple_num이 할당  /  self.y에 tax가 할당
-dapple, dapple_price
+dapple_price, dtax = mul_tax_layer.backward(dprice)          # self.x에 apple_num이 할당  /  self.y에 tax가 할당
+dapple, dapple_num = mul_apple_layer.backward(dapple_price)  # self.x에 apple이 할당  /  self.y에 apple_num가 할당
+print(dapple, dapple_num, dtax)   # 2.2 110.00000000000001 200
+
+
+## 덧셈 계층
+class AddLayer:   # 덧셈노드!#!@#!@#!@#!@#!@#!@#!@#!@#
+    def __init__(self):
+        pass
+    def forward(self, x, y):
+        out = x + y
+        return out
+    def backward(self, dout):
+        dx = dout * 1
+        dy = dout * 1
+        return dx, dy
+# 인스턴스 변수를 선언하지 않기 때문에 __init__(): 에서 pass를 해준다.
+
+# p.163의 그래프를 파이썬으로 구현한 함수
+apple = 100
+apple_num = 2
+orange = 150
+orange_num = 3
+tax = 1.1
+
+# 계층들
+mul_apple_layer = MulLayer()
+mul_orange_layer = MulLayer()
+add_apple_orange_layer = AddLayer()
+mul_tax_layer = MulLayer()
+
+# 순전파
+apple_price = mul_apple_layer.forward(apple, apple_num)
+orange_price = mul_orange_layer.forward(orange, orange_num)
+all_price = add_apple_orange_layer.forward(apple_price, orange_price)
+price = mul_tax_layer.forward(all_price, tax)
+print(price)   # 715.0000000000001
+
+# 역전파
+dprice = 1
+dall_price, dtax = mul_tax_layer.backward(dprice)
+dapple_price, dorange_price = add_apple_orange_layer.backward(dall_price)
+dapple, dapple_num = mul_apple_layer.backward(dapple_price)
+dorange, dorange_num = mul_orange_layer.backward(dorange_price)
+print(apple, apple_num, orange, orange_num, dtax)   # 100 2 150 3 650
+
+
+## 활성화 함수 계층 구현하기
+# 우선 활성화함수인 relu와 sigmoid계층을 구현한다.
+
+# relu 계층
+# 활성화함수로 사용되는 relu의 수식
+# y = x (x > 0)
+# y = 0 (x <= 0)
+# ∂y/∂x = 1 (x > 0), x가 0보다 클때 x의 값에 관계없이 기울기는 항상 1이다.
+# ∂y/∂x = 0 (x <= 0), x가 0보다 작으면 x의 값에 관계없이 기울기는 항상 0(가로 직선)이다.
+# 순전파 때 입력인 x가 0보다 크면 역전파는 상류의 값을 그대로 하류로 흘리고,
+# 순전파 때 입력인 x가 0보다 작으면 역전파는 하류로 신호를 보내지 않는다.
+# relu계층 파이썬 구현
+# 신경망 계층의 relu계층은 넘파이배열을 인수로 받는다고 가정한다!!!! 넘파이배열!@@!@#!@!@#
+class Relu:
+    def __init__(self):
+        self.mask = None
+    def forward(self, x):
+        self.mask = (x <= 0)   # booleah의 배열형태로 나온다. 여기서 주의할 점은 0보다 작은 원소들을 True로 빼준다는 점이다.
+        out = x.copy()         # 원본 데이터의 변경을 막기 위해 다른 객체를 만든다.
+        out[self.mask] = 0     # 0보다 작아서 True로 나온 원소들을 0으로 바꾼다.
+        return out
+    def backward(self, dout):  # 역전파는 결국 미분을 한다는 뜻
+        dout[self.mask] = 0    # dout배열에서 self.mask에 의해 True가 된 애들은 0으로 만들어주고 아닌(False) 원소는 그대로 둔다.
+        dx = dout
+        return dx
+        # 역전파일 때 입력값이 어떻게 들어오는지 모르겠지만 1이 아닌 경우 그냥 그대로 출력하는데 양수면 무조건 1로 출력해야하는거 아닌가요?
+        # 이해가 안감
+
+x = np.array([[1.0,-0.5], [-2.0, 3.0]])
+print(x)
+mask = (x <= 0)
+print(mask)
+
+# sigmoid 계층
+# y = 1 / (1+exp(-x))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
