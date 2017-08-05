@@ -83,5 +83,10 @@ apple_price = mul_apple_layer.forward(apple, apple_num)
 price = mul_tax_layer.forward(apple_price, tax)
 print(price)   # 220.00000000000003
 
+# 역전파 구현
+dprice = 1  # 처음에 들어오는 손실함수의 값이라고 볼 수있다.
+dapple_price, dtax = mul_tax_layer.backward(dprice)  # self.x에 apple_num이 할당  /  self.y에 tax가 할당
+dapple, dapple_price
+
 
 
