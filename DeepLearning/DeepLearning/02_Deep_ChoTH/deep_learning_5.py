@@ -200,23 +200,47 @@ b.shape
 # (2, ) * (2, 3) = (3, )
 # ∂l/∂X = (∂l/∂Y) * W.T
 # ∂l/∂W = X.T * (∂l/∂Y)
-# 이걸 유도하는 식은 생략
+# 이걸 유도하는 식은 생략하는데 다시 한번 잘 생각해보기
+# (2, 3)의 전치행렬은 (3, 2)
+# 위의 식이 affine계층의 역전파이다.(np.dot()의 역전파를 구하는 계층)
+# X와 (∂l/∂X)의 형상은 같다. W와 (∂l/∂W)의 형상도 같다.
+# 학원가서 다시한번 생각해보기 p.173
 
+# 배치용 affine계층
+# N개의 데이터의 입력값을 인수로 받는 affine계층
+X_dot_W = np.array([[0,0,0], [10,10,10]])
+B = np.array([1,2,3])
+X_dot_W
+X_dot_W + B
 
+dY = np.array([[1,2,3], [4,5,6]])
+dY
+dB = np.sum(dY, axis=0)
+dB
 
+class Affine:
+    def __init__(self):
+        self.W = W
+        self.b = b
+        self.x = None
+        self.dW = None
+        self.db = None
+    def forward(self, x):
+        self.x = x
+        out = np.dot(x, self.W) + self.b
+        return out
+    def backward(self, dout):
+        dx = np.dot(dout, self.W.T)   # 전치
+        self.dW = np.dot(self.x.T, dout)
+        self.db = np.sum(dout, axis=0)   # 바깥 차원의 대응하는 원소끼리 연산
+        return dx
+# 그러니까 affine은 가중치와 입력값, 편향을 행렬에 맞게 변환해서 계산해주는 함수이다. (순전파, 역전파)
 
-
-
-
-
-
-
-
-
-
-
-
-
+# Softmax_with_Loss 계층
+# 소프트맥스함수는 입력값을 정규화하여 출력한다.
+# mnist의 출력값은 분류는 10개이기 때문에 softmax계층의 입력은 10개가 된다.
+# 여기서는 소프트맥스와 교차엔트로피(손실함수)를 같이 포함하여 계층을 구현한다.
+#
 
 
 
