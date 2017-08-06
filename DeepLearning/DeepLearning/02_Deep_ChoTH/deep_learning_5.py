@@ -167,8 +167,40 @@ print(mask)
 
 # sigmoid 계층
 # y = 1 / (1+exp(-x))
+# 1단계 : y = x^-1을 미분하면 ∂y/∂x = -x^-2(순전파의 입력을 -2승하고 마이너스를 붙인 값)  =>  -y^2(순전파의 출력을 제곱한 후 마이너스를 붙인 값)
+# 2단계 : +노드는 강류의 값을 여과럾이 하류로 내보내는 값
+# 3단계 : 자연상수(e)는 미분하면 자연상수(e)가 나온다.
+# 4단계 : *노드는 순전파때의 값을 서로 바꿔서 -1을 곱한다.
+# 최종적으로 E = E*((1/x^2) * exp(-x))  =>  E * (y^2*exp(-x)) p.169  =>  E*(y*(1-y)) - 이렇게 유도 가능
+# 여기서 핵심은 결국에 sigmoid함수의 역전파 식은 E*(y*(1-y))@@!@!!@!@!@!!!@#!@#!@#!
+import numpy as np
+class Sigmoid:
+    def __init__(self):
+        self.out = None
+    def forward(self, x):
+        out = 1 / (1+np.exp(-x))
+        self.out = out
+    def backward(self, dout):
+        dx = dout = (1.0 - self.out) * self.out
+        return dx
 
+## Affine/Softmax 계층 구현하기
+# affine계층
+x = np.random.rand(2)   # 0~1사이 아무 숫자, 정상분포 아님
+x   # array([ 0.77238513,  0.66408782])
 
+x = np.random.rand(2)
+w = np.random.rand(2, 3)
+b = np.random.rand(3)
+x.shape
+w.shape
+b.shape
+# 그러면 뉴런의 가중치 합은 y = np.array(x, w)+b 로 계산한다.
+# 행렬의 내적계산은 대응하는 차원의 원소수를 일치시키는 것이 핵심이다.
+# (2, ) * (2, 3) = (3, )
+# ∂l/∂X = (∂l/∂Y) * W.T
+# ∂l/∂W = X.T * (∂l/∂Y)
+# 이걸 유도하는 식은 생략
 
 
 
