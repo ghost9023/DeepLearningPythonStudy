@@ -59,6 +59,7 @@
 
 # 곱셈계층
 # 이제부터 모든 계층을 forward()-순전파 와 baxkward()-역전파라고 한다.
+import numpy as np
 class MulLayer:   # 곱셈노드@!@!#!@#!@#!@#!@#!@#!@#
     def __init__(self):
         self.x = None
@@ -273,22 +274,249 @@ class SoftmaxWithLoss:
 # 선명한 오차역전파법이 등장하는 단계는 두번째인 기울기 산출이다. 앞장에서는 이 기울기를 구하기 위해서 수치미분을 사용했다. 그러나 이 수치미분은 구현하기는 쉽지만 계산이 매우우매우매우 오래걸린다.
 # 오차역전파법은 빠르다.
 
-# 오차역전파법을 적용한 신경망 구현하기
-#### 여기 일단 식 없으니까 통과~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!@!@~!@~@~
-## 코오드~~
+
+###################################################
+###################################################
+###################################################
+###################################################
+###################################################
+###################################################
+# coding: utf-8
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_grad(x):
+    return (1.0 - sigmoid(x)) * sigmoid(x)
+
+def softmax(x):
+    if x.ndim == 2:
+        x = x.T
+        x = x - np.max(x, axis=0)
+        y = np.exp(x) / np.sum(np.exp(x), axis=0)
+        return y.T
+
+    x = x - np.max(x) # 오버플로 대책
+    return np.exp(x) / np.sum(np.exp(x))
+
+
+def cross_entropy_error(y, t):
+    if y.ndim == 1:
+        t = t.reshape(1, t.size)
+        y = y.reshape(1, y.size)
+    # 훈련 데이터가 원-핫 벡터라면 정답 레이블의 인덱스로 반환
+    if t.size == y.size:
+        t = t.argmax(axis=1)
+    batch_size = y.shape[0]
+    return -np.sum(np.log(y[np.arange(batch_size), t])) / batch_size
+
+
+def numerical_gradient(f, x):  # 특정값에서 손실함수의 기울기를 벡터로 출력 @@@@, 독립변수가 여러개, 편미분 여러개 한번에 하기
+    # 여기에는 x값에 net.W가 들어가기 때문에 h값을 더해주고 뺄때 net.W값이 갱신된다.
+    h = 1e-4  # 0.0001
+    grad = np.zeros_like(x)  # x와 형상(shape)이 같은 배열을 생성
+    it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+    while not it.finished:  # .size는 배열 안에 있는 원소의 수
+        idx = it.multi_index
+        tmp_val = x[idx]  # 원래값을 저장해놓을 변수
+        x[idx] = float(tmp_val) + h
+        fxh1 = f(x)  # y값 구하기, f(x+h)
+        x[idx] = tmp_val - h
+        fxh2 = f(x)  # y값 구하기, f(x-h)
+        grad[idx] = (fxh1 - fxh2) / (2 * h)  # 기울기 구하기
+        x[idx] = tmp_val  # 값 복원
+        it.iternext()
+        return grad
+
+class Relu:
+    def __init__(self):
+        self.mask = None
+    def forward(self, x):
+        self.mask = (x <= 0)
+        out = x.copy()
+        out[self.mask] = 0
+        return out
+    def backward(self, dout):
+        dout[self.mask] = 0
+        dx = dout
+        return dx
+
+class Affine:
+    def __init__(self, W, b):
+        self.W = W
+        self.b = b
+        self.x = None
+        self.original_x_shape = None
+        # 가중치와 편향 매개변수의 미분
+        self.dW = None
+        self.db = None
+    def forward(self, x):
+        # 텐서 대응
+        self.original_x_shape = x.shape
+        x = x.reshape(x.shape[0], -1)
+        self.x = x
+        out = np.dot(self.x, self.W) + self.b
+        return out
+    def backward(self, dout):
+        dx = np.dot(dout, self.W.T)
+        self.dW = np.dot(self.x.T, dout)
+        self.db = np.sum(dout, axis=0)
+        dx = dx.reshape(*self.original_x_shape)  # 입력 데이터 모양 변경(텐서 대응)
+        return dx
+
+class SoftmaxWithLoss:
+    def __init__(self):
+        self.loss = None # 손실함수
+        self.y = None    # softmax의 출력
+        self.t = None    # 정답 레이블(원-핫 인코딩 형태)
+    def forward(self, x, t):
+        self.t = t
+        self.y = softmax(x)
+        self.loss = cross_entropy_error(self.y, self.t)
+        return self.loss
+    def backward(self, dout=1):
+        batch_size = self.t.shape[0]
+        if self.t.size == self.y.size: # 정답 레이블이 원-핫 인코딩 형태일 때
+            dx = (self.y - self.t) / batch_size
+        else:
+            dx = self.y.copy()
+            dx[np.arange(batch_size), self.t] -= 1
+            dx = dx / batch_size
+        return dx
 
 
 
 
-# 오차역전파법으로 구한 기울기 검증하기
-# 기울기를 구하는(미분)방법 두가지
-# 수치미분과 오차역전파법(해석적방법)
-# 수치미분은 오차역전파법의 결과를 비교하여 오차역전파법을 제대로 구현했는지 검증하는데 쓸 수 있다. (기울기 확인)
-## 코오드~~~~
+import sys, os
+sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
+import numpy as np
+# from common.layers import *
+# from common.gradient import numerical_gradient
+from collections import OrderedDict
+
+
+class TwoLayerNet:
+    def __init__(self, input_size, hidden_size, output_size, weight_init_std=0.01):
+        # 가중치 초기화
+        self.params = {}
+        self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
+        self.params['b1'] = np.zeros(hidden_size)
+        self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
+        self.params['b2'] = np.zeros(output_size)
+
+        # 계층 생성
+        self.layers = OrderedDict()
+        self.layers['Affine1'] = Affine(self.params['W1'], self.params['b1'])
+        self.layers['Relu1'] = Relu()
+        self.layers['Affine2'] = Affine(self.params['W2'], self.params['b2'])
+
+        self.lastLayer = SoftmaxWithLoss()   # 클래스 객체화
+
+    def predict(self, x):
+        for layer in self.layers.values():
+            x = layer.forward(x)   # 여기서 포워드로 쫙 실행
+
+        return x
+
+    # x : 입력 데이터, t : 정답 레이블
+    def loss(self, x, t):
+        y = self.predict(x)
+        return self.lastLayer.forward(y, t)
+
+    def accuracy(self, x, t):
+        y = self.predict(x)
+        y = np.argmax(y, axis=1)
+        if t.ndim != 1: t = np.argmax(t, axis=1)
+
+        accuracy = np.sum(y == t) / float(x.shape[0])
+        return accuracy
+
+    # x : 입력 데이터, t : 정답 레이블
+    def numerical_gradient(self, x, t):
+        loss_W = lambda W: self.loss(x, t)
+
+        grads = {}
+        grads['W1'] = numerical_gradient(loss_W, self.params['W1'])
+        grads['b1'] = numerical_gradient(loss_W, self.params['b1'])
+        grads['W2'] = numerical_gradient(loss_W, self.params['W2'])
+        grads['b2'] = numerical_gradient(loss_W, self.params['b2'])
+
+        return grads
+
+    def gradient(self, x, t):
+        # forward
+        self.loss(x, t)
+
+        # backward
+        dout = 1
+        dout = self.lastLayer.backward(dout)
+
+        layers = list(self.layers.values())
+        layers.reverse()
+        for layer in layers:
+            dout = layer.backward(dout)
+
+        # 결과 저장
+        grads = {}
+        grads['W1'], grads['b1'] = self.layers['Affine1'].dW, self.layers['Affine1'].db
+        grads['W2'], grads['b2'] = self.layers['Affine2'].dW, self.layers['Affine2'].db
+        # 여기서 미분값 저장함
+        return grads
+###############################@@@@@@@@@@@@@@
+###############################@@@@@@@@@@@@@@
+###############################@@@@@@@@@@@@@@
+###############################@@@@@@@@@@@@@@
 
 # 오차역전파법을 사용한 학습 구현하기
-# 코오드~`~~
+# coding: utf-8
+# 실행절
+import sys, os
 
-# 정리!!!ㅍ
+sys.path.append(os.pardir)
+
+import numpy as np
+from dataset.mnist import load_mnist
+# from two_layer_net import TwoLayerNet
+
+# 데이터 읽기
+(x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
+
+network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
+
+iters_num = 10000
+train_size = x_train.shape[0]
+batch_size = 100
+learning_rate = 0.1
+
+train_loss_list = []
+train_acc_list = []
+test_acc_list = []
+
+iter_per_epoch = max(train_size / batch_size, 1)
+
+for i in range(iters_num):
+    batch_mask = np.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+
+    # 기울기 계산
+    # grad = network.numerical_gradient(x_batch, t_batch) # 수치 미분 방식
+    grad = network.gradient(x_batch, t_batch)  # 오차역전파법 방식(훨씬 빠르다)
+
+    # 갱신
+    for key in ('W1', 'b1', 'W2', 'b2'):
+        network.params[key] -= learning_rate * grad[key]
+
+    loss = network.loss(x_batch, t_batch)
+    train_loss_list.append(loss)
+
+    if i % iter_per_epoch == 0:
+        train_acc = network.accuracy(x_train, t_train)
+        test_acc = network.accuracy(x_test, t_test)
+        train_acc_list.append(train_acc)
+        test_acc_list.append(test_acc)
+        print(train_acc, test_acc)
+
+
+            # 정리!!!
 # relu계층, softmaxwithloss계층, affine계층, softmax계층
 # 모든 계층에서 forward와 backward계층을 구현했다.
