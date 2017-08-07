@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 
 (x_train, t_train), (x_test, t_test) = load_mnist(flatten=False, one_hot_label=True)
 
+x_train, t_train = x_train[:5000], t_train[:5000]
+x_test, t_test = x_test[:1000], t_test[:1000]
+
 nn = network()
 
 iteration = 9600
@@ -24,7 +27,6 @@ for i in range(iteration + 1):
     loss_lst.append(loss)
 
     if i % iter_per_epoch == 0:
-        print(loss)
         train_acc = nn.accuracy(x_train, t_train)
         test_acc = nn.accuracy(x_test, t_test)
         train_acc_lst.append(train_acc)
