@@ -9,15 +9,15 @@ class network:
         self.temp_loss = None
         self.layers = []
         self.lr = lr
-        self.layers.append(Conv(std_scale * np.random.randn(20, 1, 5, 5), np.zeros((20)), stride=1, pad=0))
+        self.layers.append(Conv(std_scale * np.random.randn(10, 1, 5, 5), np.zeros((10)), stride=1, pad=0))
         self.layers.append(ReLU())
         self.layers.append(Pooling())
-        self.layers.append(Conv(std_scale * np.random.randn(50, 20, 5, 5), np.zeros((50)), stride=1, pad=0))
+        # self.layers.append(Conv(std_scale * np.random.randn(20, 20, 5, 5), np.zeros((20)), stride=1, pad=0))
+        # self.layers.append(ReLU())
+        # self.layers.append(Pooling())
+        self.layers.append(Conv(std_scale * np.random.randn(20, 10, 3, 3), np.zeros((20)), stride=1, pad=0))
         self.layers.append(ReLU())
-        self.layers.append(Pooling())
-        self.layers.append(Conv(std_scale * np.random.randn(500, 50, 4, 4), np.zeros((500)), stride=1, pad=0))
-        self.layers.append(ReLU())
-        self.layers.append(Affine(std_scale * np.random.randn(500, 50), np.zeros(50)))
+        self.layers.append(Affine(std_scale * np.random.randn(2000, 50), np.zeros(50)))
         self.layers.append(ReLU())
         self.layers.append(Affine(std_scale * np.random.randn(50, 10), np.zeros(10)))
         self.layers.append(SoftmaxWithLoss())

@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 from practice.cnn.function_module import img2col
 
 class Affine:
@@ -11,6 +12,7 @@ class Affine:
         self.db = None
 
     def forward(self, x):
+        # print(sys.getsizeof(x)/(1024 **3))
         self.os_x = x.shape
         if x.ndim == 4 :
             x = x.reshape(x.shape[0], -1)
@@ -28,6 +30,7 @@ class ReLU:
         self.map = None
 
     def forward(self, x):
+        # print(sys.getsizeof(x) / (1024 ** 3))
         # print(x.shape)
         self.map = (x <= 0)
         x[self.map] = 0
@@ -45,6 +48,7 @@ class SoftmaxWithLoss:
         self.t = None
 
     def forward(self, x, t):
+        # print(sys.getsizeof(x) / (1024 ** 3))
         x = x.T - np.max(x, axis=1)
         x = np.exp(x)
         sum_exp_x = np.sum(x, axis=0)
@@ -69,6 +73,7 @@ class Conv:
         self.os_x = None
 
     def forward(self, x):
+        # print(sys.getsizeof(x) / (1024 ** 3))
         self.os_x = x.shape
         N, C, H, W = x.shape
         FN, C, FH, FW = self.os_W
@@ -103,6 +108,7 @@ class Pooling:
         self.max_val = None
 
     def forward(self, x):
+        # print(sys.getsizeof(x) / (1024 ** 3))
         self.x_shape = x.shape
         N, C, H, W = x.shape
         self.map = np.zeros_like(x)
