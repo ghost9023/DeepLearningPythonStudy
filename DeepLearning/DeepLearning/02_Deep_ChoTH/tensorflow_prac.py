@@ -43,19 +43,17 @@ print(sess.run(adder_node, feed_dict={a:[1,3], b:[2,4]}))
 
 #### 텐서 딥러닝 4장 - 파일에서 데이터 읽어오기
 import numpy as np
-xy = np.loadtxt('C:\python\DeepLearningPythonStudy\DeepLearning\DeepLearning\\02_Deep_ChoTH\data\\data-01-test-score.csv', delimiter=',', dtype=np.float32)
+import tensorflow as tf
+xy = np.loadtxt('DeepLearning/DeepLearning/02_Deep_ChoTH/data/data-01-test-score.csv', delimiter=',', dtype=np.float32)
 x_data = xy[:, 0:-1]
 y_data = xy[:, [-1]]
-
-
-
-
-
-
-
-
-
-
-
+print(x_data.shape, x_data, len(x_data))
+print(y_data.shape, y_data)
+# 참고
+# b = np.array([[1,2,3,4], [5,6,7,8], [9,10,11,12]])
+# b[:, 1]   # 전체 행의 1번 열 다 출력
+# b[-1]     # 마지막행
+# b[-1, :]  # 마지막 행 전체 출력
+# b[0:2, :] # 1,2번 행의 전체 열
 
 
